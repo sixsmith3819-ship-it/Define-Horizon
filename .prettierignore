@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Production
+/build
+/out
+/.next
+/dist
+
+# Misc
+.DS_Store
+*.pem
+.env.local
+.env.*.local
+
+# Testing
+/coverage
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
