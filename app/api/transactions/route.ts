@@ -17,7 +17,7 @@ const supabase = createClient(
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    
+
     // Parse and validate filters
     const filters = {
       status: searchParams.get('status') || undefined,
@@ -25,18 +25,27 @@ export async function GET(request: NextRequest) {
       start_date: searchParams.get('start_date') || undefined,
       end_date: searchParams.get('end_date') || undefined,
       customer_id: searchParams.get('customer_id') || undefined,
+      recorded_by: searchParams.get('recorded_by') || undefined,
       page: parseInt(searchParams.get('page') || '1'),
       limit: parseInt(searchParams.get('limit') || '25'),
     };
 
-    const validatedFilters = transactionFiltersSchema.parse(filters);
+    const validatedFilters = transactionFiltersSchema.parse({
+      status: filters.status,
+      transaction_type: filters.transaction_type,
+      start_date: filters.start_date,
+      end_date: filters.end_date,
+      customer_id: filters.customer_id,
+      page: filters.page,
+      limit: filters.limit,
+    });
+
+    const selectFields =
+      '*, customer:customers(id, first_name, last_name, email, phone_number), provider:providers(id, name)';
 
     let query = supabase
       .from('transactions')
-      .select(`
-        *,
-        customer:customers(id, first_name, last_name, email, phone_number)
-      `)
+      .select(selectFields)
       .order('created_at', { ascending: false });
 
     // Apply filters
@@ -50,6 +59,11 @@ export async function GET(request: NextRequest) {
 
     if (validatedFilters.customer_id) {
       query = query.eq('customer_id', validatedFilters.customer_id);
+    }
+
+    // Filter by recorded_by for employees
+    if (filters.recorded_by) {
+      query = query.eq('recorded_by', filters.recorded_by);
     }
 
     if (validatedFilters.start_date) {
@@ -80,10 +94,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch transactions' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
   }
 }
 
@@ -108,7 +119,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (rateError && rateError.code !== 'PGRST116') {
-      // PGRST116 is "no rows found" error, which is acceptable
       throw rateError;
     }
 
@@ -131,6 +141,9 @@ export async function POST(request: NextRequest) {
       rates
     );
 
+    const selectFields =
+      '*, customer:customers(id, first_name, last_name, email, phone_number), provider:providers(id, name)';
+
     // Create transaction record
     const { data, error } = await supabase
       .from('transactions')
@@ -149,10 +162,7 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         },
       ])
-      .select(`
-        *,
-        customer:customers(id, first_name, last_name, email, phone_number)
-      `)
+      .select(selectFields)
       .single();
 
     if (error) throw error;
@@ -161,7 +171,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating transaction:', error);
 
-    // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation error', details: error.issues },
@@ -169,9 +178,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to create transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
   }
 }
