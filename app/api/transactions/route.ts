@@ -213,6 +213,7 @@ export async function POST(request: NextRequest) {
       description: validatedData.description || null,
       reference: validatedData.reference || null,
       recorded_by: user.id, // Add authenticated user's ID
+      branch_id: user.branch_id || null, // Add branch from authenticated user
       direction: 'outbound', // Default direction for new transactions
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
