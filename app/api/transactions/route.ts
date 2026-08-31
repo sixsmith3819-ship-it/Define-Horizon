@@ -11,6 +11,53 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Helper function to decode JWT token
+function decodeJWT(token: string): { sub?: string; [key: string]: unknown } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+async function getAuthenticatedUser(request: NextRequest) {
+  // Try to get token from Authorization header
+  const authHeader = request.headers.get('authorization');
+  let token: string | null = null;
+
+  if (authHeader?.startsWith('Bearer ')) {
+    token = authHeader.substring(7);
+  }
+
+  if (!token) {
+    return null;
+  }
+
+  // Decode token to get user ID
+  const tokenPayload = decodeJWT(token);
+  if (!tokenPayload?.sub) {
+    return null;
+  }
+
+  const userId = tokenPayload.sub;
+
+  // Fetch user profile
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('id, email, full_name, branch_id, role_id, is_active')
+    .eq('id', userId)
+    .single();
+
+  if (error || !profile || !profile.is_active) {
+    return null;
+  }
+
+  return profile;
+}
+
 /**
  * GET /api/transactions - Fetch all transactions with filters
  */
@@ -41,11 +88,11 @@ export async function GET(request: NextRequest) {
     });
 
     const selectFields =
-      '*, customer:customers(id, first_name, last_name, email, phone_number), provider:providers(id, name)';
+      '*, customer:customers(id, first_name, last_name, email, phone_number)';
 
     let query = supabase
       .from('transactions')
-      .select(selectFields)
+      .select(selectFields, { count: 'exact' })
       .order('created_at', { ascending: false });
 
     // Apply filters
@@ -81,7 +128,10 @@ export async function GET(request: NextRequest) {
 
     const { data, error, count } = await query;
 
-    if (error) throw error;
+    if (error) {
+      console.error('Database error fetching transactions:', error);
+      throw error;
+    }
 
     return NextResponse.json({
       data: data || [],
@@ -100,11 +150,18 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/transactions - Create new transaction
- * Automatically calculates service charge
+ * Automatically calculates service charge and requires authentication
  */
 export async function POST(request: NextRequest) {
   try {
+    // Get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized - Please log in' }, { status: 401 });
+    }
+
     const body = await request.json();
+    console.log('Received transaction data:', body);
 
     // Validate input
     const validatedData = createTransactionSchema.parse(body);
@@ -116,10 +173,10 @@ export async function POST(request: NextRequest) {
       .eq('transaction_type', validatedData.transaction_type)
       .order('effective_date', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (rateError && rateError.code !== 'PGRST116') {
-      throw rateError;
+      console.error('Error fetching rates:', rateError);
     }
 
     // Use custom rate if available, otherwise use default
@@ -142,31 +199,38 @@ export async function POST(request: NextRequest) {
     );
 
     const selectFields =
-      '*, customer:customers(id, first_name, last_name, email, phone_number), provider:providers(id, name)';
+      '*, customer:customers(id, first_name, last_name, email, phone_number)';
 
-    // Create transaction record
+    // Create transaction record with recorded_by from authenticated user
+    const transactionData = {
+      customer_id: validatedData.customer_id,
+      amount: validatedData.amount,
+      service_charge: serviceCharge,
+      total_amount: totalAmount,
+      transaction_type: validatedData.transaction_type,
+      payment_method: validatedData.payment_method,
+      status: 'pending',
+      description: validatedData.description || null,
+      reference: validatedData.reference || null,
+      recorded_by: user.id, // Add authenticated user's ID
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    console.log('Inserting transaction:', transactionData);
+
     const { data, error } = await supabase
       .from('transactions')
-      .insert([
-        {
-          customer_id: validatedData.customer_id,
-          amount: validatedData.amount,
-          service_charge: serviceCharge,
-          total_amount: totalAmount,
-          transaction_type: validatedData.transaction_type,
-          payment_method: validatedData.payment_method,
-          status: 'pending',
-          description: validatedData.description || null,
-          reference: validatedData.reference || null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ])
+      .insert([transactionData])
       .select(selectFields)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Database error creating transaction:', error);
+      throw error;
+    }
 
+    console.log('Transaction created successfully:', data);
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error('Error creating transaction:', error);
@@ -178,6 +242,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create transaction';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

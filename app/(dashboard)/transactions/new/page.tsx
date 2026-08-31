@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { TransactionForm } from '@/components/transactions/transaction-form';
 import { CreateTransactionInput, Customer } from '@/lib/validations/transaction';
 import { ArrowLeft } from 'lucide-react';
+import { apiRequest } from '@/lib/utils/api';
 
 export default function NewTransactionPage() {
   const router = useRouter();
@@ -25,11 +26,7 @@ export default function NewTransactionPage() {
   const fetchCustomers = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/customers');
-      if (!response.ok) {
-        throw new Error('Failed to fetch customers');
-      }
-      const data = await response.json();
+      const data = await apiRequest<Customer[]>('/api/customers');
       setCustomers(data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -47,20 +44,14 @@ export default function NewTransactionPage() {
     setSuccess(null);
 
     try {
-      const response = await fetch('/api/transactions', {
+      console.log('Submitting transaction data:', data);
+      
+      const result = await apiRequest<{ id: string }>('/api/transactions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create transaction');
-      }
-
-      const result = await response.json();
+      console.log('Transaction created:', result);
       setSuccess(`Transaction created successfully! ID: ${result.id}`);
 
       // Redirect to transaction detail page after a brief delay
@@ -68,8 +59,9 @@ export default function NewTransactionPage() {
         router.push(`/transactions/${result.id}`);
       }, 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Error creating transaction:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      console.error('Error creating transaction:', errorMessage, err);
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
