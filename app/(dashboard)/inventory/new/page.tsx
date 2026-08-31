@@ -6,35 +6,30 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ProductForm } from '@/components/inventory/product-form';
+import { apiRequest } from '@/lib/utils/api';
 
 export default function NewProductPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(data: any) {
     try {
       setIsLoading(true);
+      setError(null);
 
-      const response = await fetch('/api/products', {
+      const result = await apiRequest<{ id: string; name: string }>('/api/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(data),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create product');
-      }
-
-      const result = await response.json();
 
       // Show success message and redirect
       alert(`Product "${result.name}" created successfully!`);
       router.push(`/inventory/${result.id}`);
     } catch (error) {
-      console.error('Error creating product:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create product';
+      console.error('Error creating product:', errorMessage, error);
+      setError(errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
@@ -57,6 +52,14 @@ export default function NewProductPage() {
         <span>→</span>
         <span>New Product</span>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800 font-medium">Error</p>
+          <p className="text-red-700 text-sm mt-1">{error}</p>
+        </div>
+      )}
 
       {/* Form Card */}
       <div className="bg-white rounded-lg shadow p-8 max-w-2xl">
