@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Users,
   ArrowUpDown,
@@ -35,14 +33,6 @@ interface Transaction {
   };
 }
 
-interface UserProfile {
-  user_id: string;
-  role: {
-    name: string;
-  };
-  full_name: string;
-}
-
 interface MetricCardProps {
   title: string;
   value: string | number;
@@ -67,8 +57,6 @@ const MetricCard = ({ title, value, borderColor, icon: Icon }: MetricCardProps) 
 );
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     totalCustomers: 0,
@@ -82,15 +70,6 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        // Get user profile
-        const profileRes = await fetch('/api/auth/profile');
-        if (!profileRes.ok) {
-          router.push('/login');
-          return;
-        }
-        const profile = await profileRes.json();
-        setUserProfile(profile);
-
         // Fetch metrics
         const metricsRes = await fetch('/api/dashboard/metrics');
         if (metricsRes.ok) {
@@ -98,14 +77,8 @@ export default function DashboardPage() {
           setMetrics(data.data || data);
         }
 
-        // Fetch transactions based on role
-        let txUrl = '/api/transactions';
-        if (profile.role?.name === 'employee') {
-          // Employees only see transactions they recorded
-          txUrl += `?recorded_by=${profile.user_id}`;
-        }
-
-        const txRes = await fetch(txUrl);
+        // Fetch all transactions
+        const txRes = await fetch('/api/transactions');
         if (txRes.ok) {
           const data = await txRes.json();
           setTransactions(data.data || data);
@@ -119,7 +92,7 @@ export default function DashboardPage() {
     }
 
     loadDashboard();
-  }, [router]);
+  }, []);
 
   if (loading) {
     return (
@@ -142,55 +115,45 @@ export default function DashboardPage() {
     );
   }
 
-  const isAdmin = userProfile?.role?.name === 'admin';
-  const isEmployee = userProfile?.role?.name === 'employee';
-
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">
-          Welcome back, {userProfile?.full_name} (
-          {userProfile?.role?.name === 'admin' ? 'Administrator' : 'Employee'})
-        </p>
+        <p className="text-gray-600">Define Horizon Business Management System</p>
       </div>
 
-      {/* Metrics Grid - Only show for Admin */}
-      {isAdmin && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Total Customers"
-            value={metrics.totalCustomers}
-            borderColor="border-blue-500"
-            icon={Users}
-          />
-          <MetricCard
-            title="Total Transactions"
-            value={metrics.totalTransactions}
-            borderColor="border-green-500"
-            icon={ArrowUpDown}
-          />
-          <MetricCard
-            title="Transaction Revenue"
-            value={`$${metrics.totalRevenue.toFixed(2)}`}
-            borderColor="border-purple-500"
-            icon={DollarSign}
-          />
-          <MetricCard
-            title="Service Charges"
-            value={`$${metrics.serviceCharges.toFixed(2)}`}
-            borderColor="border-orange-500"
-            icon={CreditCard}
-          />
-        </div>
-      )}
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MetricCard
+          title="Total Customers"
+          value={metrics.totalCustomers}
+          borderColor="border-blue-500"
+          icon={Users}
+        />
+        <MetricCard
+          title="Total Transactions"
+          value={metrics.totalTransactions}
+          borderColor="border-green-500"
+          icon={ArrowUpDown}
+        />
+        <MetricCard
+          title="Transaction Revenue"
+          value={`$${metrics.totalRevenue.toFixed(2)}`}
+          borderColor="border-purple-500"
+          icon={DollarSign}
+        />
+        <MetricCard
+          title="Service Charges"
+          value={`$${metrics.serviceCharges.toFixed(2)}`}
+          borderColor="border-orange-500"
+          icon={CreditCard}
+        />
+      </div>
 
       {/* Transactions Section */}
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          {isAdmin ? 'All Transactions' : 'Your Transactions'}
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">All Transactions</h2>
 
         {transactions.length === 0 ? (
           <div className="flex items-center justify-center py-12">
@@ -202,9 +165,7 @@ export default function DashboardPage() {
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
-                  {isAdmin && (
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Customer</th>
-                  )}
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Customer</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Amount</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Direction</th>
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Provider</th>
@@ -217,11 +178,9 @@ export default function DashboardPage() {
                     <td className="py-3 px-4 text-sm text-gray-600">
                       {new Date(tx.created_at).toLocaleDateString()}
                     </td>
-                    {isAdmin && (
-                      <td className="py-3 px-4 text-sm text-gray-900">
-                        {tx.customer?.first_name} {tx.customer?.last_name}
-                      </td>
-                    )}
+                    <td className="py-3 px-4 text-sm text-gray-900">
+                      {tx.customer?.first_name} {tx.customer?.last_name}
+                    </td>
                     <td className="py-3 px-4 text-sm font-semibold text-gray-900">
                       ${parseFloat(tx.amount.toString()).toFixed(2)}
                     </td>
