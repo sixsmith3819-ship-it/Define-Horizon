@@ -20,6 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useUserRole } from '@/lib/hooks/useUserRole';
 
 export function Sidebar() {
   const { session, user, signOut } = useAuth();

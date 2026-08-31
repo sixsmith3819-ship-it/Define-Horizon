@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useUserRole } from '@/lib/hooks/useUserRole';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Archive, Trash2, Eye, Plus, Search } from 'lucide-react';
@@ -16,7 +17,7 @@ export default function AnnouncementsPage() {
   const router = useRouter();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userRole, setUserRole] = useState<string>('employee');
+  const { userRole, isSuperAdmin } = useUserRole();
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<AnnouncementStatus | 'all'>('all');
@@ -53,19 +54,6 @@ export default function AnnouncementsPage() {
   }, [page, statusFilter, priorityFilter, searchTerm]);
 
   useEffect(() => {
-    // Decode JWT to get user role (only runs once on mount or when dependencies change)
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const role = payload.user_metadata?.role || payload.role || 'employee';
-        setUserRole(role);
-      } catch (e) {
-        console.error('Failed to decode token:', e);
-        setUserRole('employee'); // Default to employee on error
-      }
-    }
-    
     fetchAnnouncements();
   }, [fetchAnnouncements]);
 
@@ -152,8 +140,7 @@ export default function AnnouncementsPage() {
     sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }
 
-  // Check if user is super admin
-  const isSuperAdmin = userRole === 'super_admin';
+
 
   return (
     <div className="p-6 space-y-6">

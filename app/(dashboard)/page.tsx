@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useUserRole } from '@/lib/hooks/useUserRole';
 import {
   Users,
   ArrowUpDown,
@@ -66,6 +67,7 @@ export default function DashboardPage() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { isSuperAdmin } = useUserRole();
 
   useEffect(() => {
     async function loadDashboard() {
