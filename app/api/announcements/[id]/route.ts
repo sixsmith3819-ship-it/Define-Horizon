@@ -1,141 +1,69 @@
-import { createAuthClient } from '@/lib/auth/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Helper function to decode JWT token
+function decodeJWT(token: string): { sub?: string; [key: string]: unknown } | null {
   try {
-    const { id } = await params;
-    const supabase = createAuthClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('announcements')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-
-      try {
-        await supabase
-          .from('announcements')
-          .update({ view_count: (data.view_count || 0) + 1 })
-          .eq('id', id);
-      } catch (updateError) {
-        console.error('Failed to update view count:', updateError);
-      }
-
-      return NextResponse.json(data);
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json({
-        id,
-        title: 'Sample Announcement',
-        content: 'This is a sample announcement content.',
-        priority: 'normal',
-        status: 'published',
-        created_at: new Date().toISOString(),
-        view_count: 1,
-      });
-    }
-  } catch (error) {
-    console.error('Error fetching announcement:', error);
-    return NextResponse.json({ error: 'Failed to fetch announcement' }, { status: 500 });
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    return payload;
+  } catch {
+    return null;
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const supabase = createAuthClient();
+async function getAuthenticatedUser(request: NextRequest) {
+  const authHeader = request.headers.get('authorization');
+  let token: string | null = null;
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json();
-
-    try {
-      const { data, error } = await supabase
-        .from('announcements')
-        .update({
-          ...body,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      return NextResponse.json(data);
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json({ message: 'Announcement updated (mock)' }, { status: 200 });
-    }
-  } catch (error) {
-    console.error('Error updating announcement:', error);
-    return NextResponse.json({ error: 'Failed to update announcement' }, { status: 500 });
+  if (authHeader?.startsWith('Bearer ')) {
+    token = authHeader.substring(7);
   }
+
+  if (!token) {
+    return null;
+  }
+
+  const payload = decodeJWT(token);
+  if (!payload?.sub) {
+    return null;
+  }
+
+  return { id: payload.sub, ...payload };
 }
 
-export async function DELETE(
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
-    const supabase = createAuthClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { hard_delete } = await request.json().catch(() => ({}));
+    const { id } = await params;
 
-    try {
-      if (hard_delete) {
-        const { error } = await supabase.from('announcements').delete().eq('id', id);
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('announcements')
-          .update({
-            status: 'archived',
-            archived_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', id);
-
-        if (error) throw error;
-      }
-
-      return NextResponse.json({ message: 'Announcement deleted' });
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json({ message: 'Announcement deleted (mock)' }, { status: 200 });
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json({ error: 'Announcement not found' }, { status: 404 });
     }
+
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Error deleting announcement:', error);
-    return NextResponse.json({ error: 'Failed to delete announcement' }, { status: 500 });
+    console.error('GET announcement error:', error);
+    return NextResponse.json({ error: 'Failed to fetch announcement' }, { status: 500 });
   }
 }
