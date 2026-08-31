@@ -178,7 +178,9 @@ export async function POST(request: NextRequest) {
           name: validatedData.name,
           category: validatedData.category,
           buying_price: validatedData.buying_price,
+          unit_cost: validatedData.buying_price, // Map to unit_cost for database
           selling_price: validatedData.selling_price,
+          unit_price: validatedData.selling_price, // Map to unit_price for database
           quantity: validatedData.quantity,
           reorder_level: validatedData.reorder_level,
           description: validatedData.description,
