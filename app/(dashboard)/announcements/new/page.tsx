@@ -72,7 +72,10 @@ export default function NewAnnouncementPage() {
 
       const res = await fetch('/api/announcements', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`
+        },
         body: JSON.stringify(payload),
       });
 
@@ -209,10 +212,10 @@ export default function NewAnnouncementPage() {
                       }`}
                     >
                       <span className={`capitalize ${priorityColors[p as Priority]}`}>
-                        {p === 'urgent' && '🔴 '}
-                        {p === 'high' && '🟠 '}
-                        {p === 'normal' && '🔵 '}
-                        {p === 'low' && '⚪ '}
+                        {p === 'urgent' && 'ðŸ”´ '}
+                        {p === 'high' && 'ðŸŸ  '}
+                        {p === 'normal' && 'ðŸ”µ '}
+                        {p === 'low' && 'âšª '}
                         {p}
                       </span>
                     </button>
@@ -403,10 +406,10 @@ export default function NewAnnouncementPage() {
                 <p className="font-semibold text-gray-900">Publishing Options:</p>
                 <ul className="space-y-1">
                   <li>
-                    • <span className="font-medium">Save as Draft:</span> Not visible to users yet
+                    â€¢ <span className="font-medium">Save as Draft:</span> Not visible to users yet
                   </li>
                   <li>
-                    • <span className="font-medium">Publish:</span> Visible to all immediately
+                    â€¢ <span className="font-medium">Publish:</span> Visible to all immediately
                   </li>
                   <li className="pt-2">Status can be changed later by editing</li>
                 </ul>
