@@ -26,26 +26,19 @@ export default function AnnouncementsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    // Decode JWT to get user role
+    // Decode JWT to get user role (only runs once on mount or when dependencies change)
     const token = localStorage.getItem('access_token');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setUserRole(payload.user_metadata?.role || payload.role || 'employee');
+        const role = payload.user_metadata?.role || payload.role || 'employee';
+        setUserRole(role);
       } catch (e) {
         console.error('Failed to decode token:', e);
+        setUserRole('employee'); // Default to employee on error
       }
     }
-    // Decode JWT to get user role
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setUserRole(payload.user_metadata?.role || payload.role || 'employee');
-      } catch (e) {
-        console.error('Failed to decode token:', e);
-      }
-    }
+    
     fetchAnnouncements();
   }, [page, statusFilter, priorityFilter, searchTerm]);
 
@@ -60,7 +53,10 @@ export default function AnnouncementsPage() {
         ...(searchTerm && { search: searchTerm }),
       });
 
-      const res = await fetch(`/api/announcements?${params.toString()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` } });
+      const res = await fetch(`/api/announcements?${params.toString()}`, { 
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` } 
+      });
+      
       if (!res.ok) throw new Error('Failed to fetch announcements');
 
       const result = await res.json();
@@ -79,7 +75,10 @@ export default function AnnouncementsPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${localStorage.getItem('access_token')}` 
+        },
         body: JSON.stringify({ status: 'archived' }),
       });
 
@@ -96,7 +95,10 @@ export default function AnnouncementsPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
+        headers: { 
+          'Content-Type': 'application/json', 
+          Authorization: `Bearer ${localStorage.getItem('access_token')}` 
+        },
         body: JSON.stringify({ hard_delete: true }),
       });
 
@@ -150,6 +152,9 @@ export default function AnnouncementsPage() {
     sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }
 
+  // Check if user is super admin
+  const isSuperAdmin = userRole === 'super_admin';
+
   return (
     <div className="p-6 space-y-6">
       {/* Header Section */}
@@ -159,11 +164,15 @@ export default function AnnouncementsPage() {
             <h1 className="text-4xl font-bold text-gradient-primary mb-2">Announcements</h1>
             <p className="text-slate-600 text-lg">Company-wide communications and updates</p>
           </div>
-          {userRole === 'super_admin' && (<Link href="/announcements/new" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium"
-          >
-            <Plus className="w-5 h-5" />
-            New Announcement
-          </Link>)}
+          {isSuperAdmin && (
+            <Link 
+              href="/announcements/new" 
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium"
+            >
+              <Plus className="w-5 h-5" />
+              New Announcement
+            </Link>
+          )}
         </div>
       </div>
 
@@ -284,7 +293,7 @@ export default function AnnouncementsPage() {
                 ? 'No announcements yet. Create one to get started.'
                 : 'No announcements match your filters.'}
             </p>
-            {announcements.length === 0 && (
+            {announcements.length === 0 && isSuperAdmin && (
               <Link
                 href="/announcements/new"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium"
@@ -359,20 +368,24 @@ export default function AnnouncementsPage() {
                 >
                   View Details
                 </Link>
-                <button
-                  onClick={() => handleArchive(announcement.id)}
-                  title="Archive"
-                  className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
-                >
-                  <Archive className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(announcement.id)}
-                  title="Delete"
-                  className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-all"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+                {isSuperAdmin && (
+                  <>
+                    <button
+                      onClick={() => handleArchive(announcement.id)}
+                      title="Archive"
+                      className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
+                    >
+                      <Archive className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(announcement.id)}
+                      title="Delete"
+                      className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-all"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}
@@ -449,18 +462,22 @@ export default function AnnouncementsPage() {
                         >
                           View
                         </Link>
-                        <button
-                          onClick={() => handleArchive(announcement.id)}
-                          className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
-                        >
-                          Archive
-                        </button>
-                        <button
-                          onClick={() => handleDelete(announcement.id)}
-                          className="text-red-600 hover:text-red-900 font-medium transition-colors"
-                        >
-                          Delete
-                        </button>
+                        {isSuperAdmin && (
+                          <>
+                            <button
+                              onClick={() => handleArchive(announcement.id)}
+                              className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
+                            >
+                              Archive
+                            </button>
+                            <button
+                              onClick={() => handleDelete(announcement.id)}
+                              className="text-red-600 hover:text-red-900 font-medium transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -495,4 +512,3 @@ export default function AnnouncementsPage() {
     </div>
   );
 }
-
