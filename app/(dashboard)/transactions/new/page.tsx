@@ -16,6 +16,7 @@ export default function NewTransactionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   // Fetch customers on mount
@@ -41,6 +42,7 @@ export default function NewTransactionPage() {
   ) => {
     setIsSubmitting(true);
     setError(null);
+    setErrorDetails(null);
     setSuccess(null);
 
     try {
@@ -61,6 +63,15 @@ export default function NewTransactionPage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       console.error('Error creating transaction:', errorMessage, err);
+      
+      // Try to parse additional error details
+      try {
+        const errorObj = err as any;
+        if (errorObj.details) {
+          setErrorDetails(JSON.stringify(errorObj.details, null, 2));
+        }
+      } catch {}
+      
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -109,6 +120,11 @@ export default function NewTransactionPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-800 font-medium">Error</p>
           <p className="text-red-700 text-sm mt-1">{error}</p>
+          {errorDetails && (
+            <pre className="mt-2 text-xs text-red-600 bg-red-100 p-2 rounded overflow-auto">
+              {errorDetails}
+            </pre>
+          )}
         </div>
       )}
 

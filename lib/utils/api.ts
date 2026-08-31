@@ -45,8 +45,36 @@ export async function authenticatedFetch(
  */
 export async function handleApiResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Request failed' }));
-    throw new Error(error.error || error.message || `Request failed with status ${response.status}`);
+    let errorMessage = `Request failed with status ${response.status}`;
+    let errorDetails = null;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+      errorDetails = errorData.details || null;
+      
+      console.error('API Error Response:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorMessage,
+        details: errorDetails,
+        fullResponse: errorData,
+      });
+    } catch (parseError) {
+      console.error('Could not parse error response:', parseError);
+      // Try to get text if JSON parse failed
+      try {
+        const errorText = await response.text();
+        console.error('Raw error response:', errorText);
+        errorMessage = errorText || errorMessage;
+      } catch {}
+    }
+
+    const error = new Error(errorMessage) as Error & { details?: unknown };
+    if (errorDetails) {
+      error.details = errorDetails;
+    }
+    throw error;
   }
 
   return response.json();
