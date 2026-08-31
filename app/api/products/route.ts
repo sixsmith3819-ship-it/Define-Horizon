@@ -183,6 +183,7 @@ export async function POST(request: NextRequest) {
           unit_price: validatedData.selling_price, // Map to unit_price for database
           quantity: validatedData.quantity,
           reorder_level: validatedData.reorder_level,
+          reorder_point: validatedData.reorder_level, // Map to reorder_point for database
           description: validatedData.description,
           status: validatedData.status,
           branch_id: user.branch_id || null,
