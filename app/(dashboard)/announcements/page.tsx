@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Archive, Trash2, Eye, Plus, Search } from 'lucide-react';
@@ -25,24 +25,7 @@ export default function AnnouncementsPage() {
   const [viewMode, setViewMode] = useState<'list' | 'card'>('card');
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    // Decode JWT to get user role (only runs once on mount or when dependencies change)
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const role = payload.user_metadata?.role || payload.role || 'employee';
-        setUserRole(role);
-      } catch (e) {
-        console.error('Failed to decode token:', e);
-        setUserRole('employee'); // Default to employee on error
-      }
-    }
-    
-    fetchAnnouncements();
-  }, [page, statusFilter, priorityFilter, searchTerm]);
-
-  async function fetchAnnouncements() {
+  const fetchAnnouncements = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -67,7 +50,24 @@ export default function AnnouncementsPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [page, statusFilter, priorityFilter, searchTerm]);
+
+  useEffect(() => {
+    // Decode JWT to get user role (only runs once on mount or when dependencies change)
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const role = payload.user_metadata?.role || payload.role || 'employee';
+        setUserRole(role);
+      } catch (e) {
+        console.error('Failed to decode token:', e);
+        setUserRole('employee'); // Default to employee on error
+      }
+    }
+    
+    fetchAnnouncements();
+  }, [fetchAnnouncements]);
 
   async function handleArchive(id: string) {
     if (!confirm('Archive this announcement?')) return;
