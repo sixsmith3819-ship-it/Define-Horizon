@@ -1,6 +1,6 @@
-// lib/auth/auth-context.tsx
 'use client';
 
+/* eslint-disable react-hooks/set-state-in-effect */
 import { createContext, useContext, useEffect, useState } from 'react';
 
 export interface AuthSession {
@@ -39,31 +39,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Load session from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('auth_session');
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem('auth_session');
+      if (stored) {
         const parsedSession = JSON.parse(stored);
         setSession(parsedSession);
-        // Optionally fetch user profile here
-        // fetchUserProfile(parsedSession.user.id); // TODO: implement user profile endpoint
-      } catch (e) {
-        console.error('Failed to parse session:', e);
       }
+    } catch (e) {
+      console.error('Failed to parse session:', e);
+      localStorage.removeItem('auth_session');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const res = await fetch(`/api/users/${userId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.data || data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch user profile:', error);
-    }
-  };
 
   const signOut = async () => {
     try {
