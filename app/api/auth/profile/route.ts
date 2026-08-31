@@ -1,18 +1,27 @@
-import { createClient } from '@supabase/supabase-js';
-import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Get cookies from request
-    const cookieStore = request.cookies;
+    const cookieStore = await cookies();
 
-    const supabase = createClient(
+    const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
-        global: {
-          headers: {
-            Authorization: `Bearer ${cookieStore.get('sb-auth-token')?.value || cookieStore.get('sb-access-token')?.value}`,
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // Ignore cookie errors
+            }
           },
         },
       }
@@ -25,10 +34,11 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
+      console.error('Auth error:', authError);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user profile with role - use 'id' column, not 'user_id'
+    // Get user profile with role
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('*, role:role_id(name, description)')
