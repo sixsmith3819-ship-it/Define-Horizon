@@ -1,10 +1,7 @@
-﻿import { createAuthClient } from '@/lib/auth/supabase';
+import { createAuthClient } from '@/lib/auth/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const supabase = createAuthClient();
@@ -27,11 +24,14 @@ export async function GET(
 
       if (error) throw error;
 
-      await supabase
-        .from('announcements')
-        .update({ view_count: (data.view_count || 0) + 1 })
-        .eq('id', id)
-        .catch(() => {});
+      try {
+        await supabase
+          .from('announcements')
+          .update({ view_count: (data.view_count || 0) + 1 })
+          .eq('id', id);
+      } catch (updateError) {
+        console.error('Failed to update view count:', updateError);
+      }
 
       return NextResponse.json(data);
     } catch (dbError) {
@@ -48,17 +48,11 @@ export async function GET(
     }
   } catch (error) {
     console.error('Error fetching announcement:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch announcement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch announcement' }, { status: 500 });
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const supabase = createAuthClient();
@@ -90,17 +84,11 @@ export async function PATCH(
       return NextResponse.json(data);
     } catch (dbError) {
       console.error('Database error:', dbError);
-      return NextResponse.json(
-        { message: 'Announcement updated (mock)' },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: 'Announcement updated (mock)' }, { status: 200 });
     }
   } catch (error) {
     console.error('Error updating announcement:', error);
-    return NextResponse.json(
-      { error: 'Failed to update announcement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update announcement' }, { status: 500 });
   }
 }
 
@@ -125,10 +113,7 @@ export async function DELETE(
 
     try {
       if (hard_delete) {
-        const { error } = await supabase
-          .from('announcements')
-          .delete()
-          .eq('id', id);
+        const { error } = await supabase.from('announcements').delete().eq('id', id);
 
         if (error) throw error;
       } else {
@@ -147,16 +132,10 @@ export async function DELETE(
       return NextResponse.json({ message: 'Announcement deleted' });
     } catch (dbError) {
       console.error('Database error:', dbError);
-      return NextResponse.json(
-        { message: 'Announcement deleted (mock)' },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: 'Announcement deleted (mock)' }, { status: 200 });
     }
   } catch (error) {
     console.error('Error deleting announcement:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete announcement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete announcement' }, { status: 500 });
   }
 }

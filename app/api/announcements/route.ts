@@ -1,4 +1,4 @@
-﻿import { createAuthClient } from '@/lib/auth/supabase';
+import { createAuthClient } from '@/lib/auth/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -25,12 +25,17 @@ export async function GET(request: NextRequest) {
 
     // Try to fetch from database, fall back to mock data
     try {
-      const { data, error, count } = await supabase
-        .from('announcements')
-        .select('*', { count: 'exact' })
-        .eq('status', status === 'all' ? null : status, { foreign: false })
-        .or(status === 'all' ? undefined : '', { foreign: false })
-        .range((page - 1) * limit, page * limit - 1);
+      let query = supabase.from('announcements').select('*', { count: 'exact' });
+
+      if (status !== 'all') {
+        query = query.eq('status', status);
+      }
+
+      if (priority !== 'all') {
+        query = query.eq('priority', priority);
+      }
+
+      const { data, error, count } = await query.range((page - 1) * limit, page * limit - 1);
 
       if (error) throw error;
 
@@ -45,13 +50,14 @@ export async function GET(request: NextRequest) {
       });
     } catch (dbError) {
       console.error('Database error:', dbError);
-      
+
       // Return mock data if table doesn't exist
       const mockAnnouncements = [
         {
           id: '1',
           title: 'Welcome to Define Horizon BMS',
-          content: 'This is your company announcement board. Create announcements to communicate with your team.',
+          content:
+            'This is your company announcement board. Create announcements to communicate with your team.',
           priority: 'normal',
           status: 'published',
           created_at: new Date().toISOString(),
@@ -60,7 +66,8 @@ export async function GET(request: NextRequest) {
         {
           id: '2',
           title: 'System Updates Available',
-          content: 'New features and improvements have been deployed. Check the release notes for details.',
+          content:
+            'New features and improvements have been deployed. Check the release notes for details.',
           priority: 'high',
           status: 'published',
           created_at: new Date(Date.now() - 86400000).toISOString(),
@@ -71,15 +78,16 @@ export async function GET(request: NextRequest) {
       // Filter mock data
       let filtered = mockAnnouncements;
       if (status !== 'all') {
-        filtered = filtered.filter(a => a.status === status);
+        filtered = filtered.filter((a) => a.status === status);
       }
       if (priority !== 'all') {
-        filtered = filtered.filter(a => a.priority === priority);
+        filtered = filtered.filter((a) => a.priority === priority);
       }
       if (search) {
-        filtered = filtered.filter(a => 
-          a.title.toLowerCase().includes(search.toLowerCase()) ||
-          a.content.toLowerCase().includes(search.toLowerCase())
+        filtered = filtered.filter(
+          (a) =>
+            a.title.toLowerCase().includes(search.toLowerCase()) ||
+            a.content.toLowerCase().includes(search.toLowerCase())
         );
       }
 
@@ -95,10 +103,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Announcements API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch announcements' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch announcements' }, { status: 500 });
   }
 }
 
@@ -118,10 +123,7 @@ export async function POST(request: NextRequest) {
     const { title, content, priority = 'normal', status = 'draft' } = body;
 
     if (!title || !content) {
-      return NextResponse.json(
-        { error: 'Title and content are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
     }
 
     // Try to insert into database, fall back to returning mock response
@@ -148,7 +150,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(data, { status: 201 });
     } catch (dbError) {
       console.error('Database error:', dbError);
-      
+
       // Return mock response
       const mockAnnouncement = {
         id: Math.random().toString(36).substr(2, 9),
@@ -166,9 +168,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('POST announcements error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create announcement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create announcement' }, { status: 500 });
   }
 }
