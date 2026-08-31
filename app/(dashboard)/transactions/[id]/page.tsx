@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { TransactionWithCustomer, TransactionStatus } from '@/lib/validations/transaction';
@@ -10,10 +10,11 @@ import { format } from 'date-fns';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function TransactionDetailPage({ params }: PageProps) {
+  const { id } = use(params);
   const router = useRouter();
   const [transaction, setTransaction] = useState<TransactionWithCustomer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,14 +26,14 @@ export default function TransactionDetailPage({ params }: PageProps) {
 
   useEffect(() => {
     fetchTransaction();
-  }, [params.id]);
+  }, [id]);
 
   const fetchTransaction = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`/api/transactions/${params.id}`);
+      const response = await fetch(`/api/transactions/${id}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch transaction');
@@ -58,7 +59,7 @@ export default function TransactionDetailPage({ params }: PageProps) {
     setUpdateError(null);
 
     try {
-      const response = await fetch(`/api/transactions/${params.id}`, {
+      const response = await fetch(`/api/transactions/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -222,21 +223,21 @@ export default function TransactionDetailPage({ params }: PageProps) {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Transaction Amount:</span>
-                  <span className="font-medium text-gray-900">{transaction.amount.toFixed(2)}</span>
+                  <span className="font-medium text-gray-900">${transaction.amount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">
                     Service Charge ({transaction.transaction_type === 'domestic' ? '8%' : '10%'}):
                   </span>
                   <span className="font-medium text-blue-600">
-                    +{transaction.service_charge.toFixed(2)}
+                    +${transaction.service_charge.toFixed(2)}
                   </span>
                 </div>
                 <div className="border-t border-blue-200 my-2" />
                 <div className="flex justify-between">
                   <span className="font-semibold text-gray-900">Total Amount:</span>
                   <span className="text-lg font-bold text-blue-600">
-                    {transaction.total_amount.toFixed(2)}
+                    ${transaction.total_amount.toFixed(2)}
                   </span>
                 </div>
               </div>
