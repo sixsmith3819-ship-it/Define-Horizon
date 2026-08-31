@@ -51,14 +51,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return success - cookies are now set via Supabase SSR
-    return NextResponse.json({
+    // Return token to be stored in localStorage
+    const response = NextResponse.json({
       success: true,
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
       user: {
         id: data.user.id,
         email: data.user.email,
       },
     });
+
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
