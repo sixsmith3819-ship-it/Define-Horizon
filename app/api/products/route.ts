@@ -16,7 +16,7 @@ const supabase = createClient(
 );
 
 // Helper function to decode JWT token
-function decodeJWT(token: string): { sub?: string; [key: string]: unknown } | null {
+function decodeJWT(token: string): { sub?: string; email?: string; [key: string]: unknown } | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
@@ -40,23 +40,37 @@ async function getAuthenticatedUser(request: NextRequest) {
   }
 
   const tokenPayload = decodeJWT(token);
-  if (!tokenPayload?.sub) {
+  if (!tokenPayload?.email) {
     return null;
   }
 
-  const userId = tokenPayload.sub;
+  const userEmail = tokenPayload.email;
 
+  // Fetch profile with role information by email
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('id, email, full_name, branch_id, role_id, is_active')
-    .eq('id', userId)
+    .select(
+      id, 
+      email, 
+      full_name, 
+      branch_id, 
+      role_id, 
+      is_active,
+      role:roles!role_id (
+        role_name
+      )
+    )
+    .eq('email', userEmail)
     .single();
 
   if (error || !profile || !profile.is_active) {
     return null;
   }
 
-  return profile;
+  return {
+    ...profile,
+    role_name: profile.role?.role_name || 'employee'
+  };
 }
 
 /**

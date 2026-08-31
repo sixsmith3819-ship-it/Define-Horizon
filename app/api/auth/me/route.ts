@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 
 // Helper function to decode JWT token
-function decodeJWT(token: string): { sub?: string; [key: string]: unknown } | null {
+function decodeJWT(token: string): { sub?: string; email?: string; [key: string]: unknown } | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
@@ -33,19 +33,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Decode JWT to get user_id
+    // Decode JWT to get user email
     const payload = decodeJWT(token);
-    if (!payload?.sub) {
+    if (!payload?.email) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const userId = payload.sub;
+    const userEmail = payload.email;
 
-    // Fetch user profile with role from database
+    // Fetch user profile with role from database by email
     const { data: profile, error } = await supabase
       .from('profiles')
       .select(`
-        user_id,
+        id,
         email,
         full_name,
         phone_number,
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
           description
         )
       `)
-      .eq('user_id', userId)
+      .eq('email', userEmail)
       .single();
 
     if (error || !profile) {
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     // Return user profile with role name
     return NextResponse.json({
-      user_id: profile.user_id,
+      id: profile.id,
       email: profile.email,
       full_name: profile.full_name,
       phone_number: profile.phone_number,
