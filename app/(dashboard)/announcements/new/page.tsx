@@ -212,10 +212,10 @@ export default function NewAnnouncementPage() {
                       }`}
                     >
                       <span className={`capitalize ${priorityColors[p as Priority]}`}>
-                        {p === 'urgent' && 'ðŸ”´ '}
-                        {p === 'high' && 'ðŸŸ  '}
-                        {p === 'normal' && 'ðŸ”µ '}
-                        {p === 'low' && 'âšª '}
+                        {p === 'urgent' && 'Ã°Å¸â€Â´ '}
+                        {p === 'high' && 'Ã°Å¸Å¸Â  '}
+                        {p === 'normal' && 'Ã°Å¸â€Âµ '}
+                        {p === 'low' && 'Ã¢Å¡Âª '}
                         {p}
                       </span>
                     </button>
@@ -406,10 +406,10 @@ export default function NewAnnouncementPage() {
                 <p className="font-semibold text-gray-900">Publishing Options:</p>
                 <ul className="space-y-1">
                   <li>
-                    â€¢ <span className="font-medium">Save as Draft:</span> Not visible to users yet
+                    Ã¢â‚¬Â¢ <span className="font-medium">Save as Draft:</span> Not visible to users yet
                   </li>
                   <li>
-                    â€¢ <span className="font-medium">Publish:</span> Visible to all immediately
+                    Ã¢â‚¬Â¢ <span className="font-medium">Publish:</span> Visible to all immediately
                   </li>
                   <li className="pt-2">Status can be changed later by editing</li>
                 </ul>
