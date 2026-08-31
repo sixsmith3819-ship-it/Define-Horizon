@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { PageContainer, FormCard, PageHeader } from '@/components/layout/PageContainer';
+import { apiRequest } from '@/lib/utils/api';
 
 export default function NewCustomerPage() {
   const router = useRouter();
@@ -43,9 +44,8 @@ export default function NewCustomerPage() {
         throw new Error('Please enter a valid email address');
       }
 
-      const res = await fetch('/api/customers', {
+      await apiRequest('/api/customers', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           first_name: formData.first_name.trim(),
           last_name: formData.last_name.trim(),
@@ -55,11 +55,6 @@ export default function NewCustomerPage() {
           address: formData.address.trim() || null,
         }),
       });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create customer');
-      }
 
       router.push('/customers');
       router.refresh();
