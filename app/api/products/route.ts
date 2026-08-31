@@ -15,6 +15,50 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Helper function to decode JWT token
+function decodeJWT(token: string): { sub?: string; [key: string]: unknown } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+async function getAuthenticatedUser(request: NextRequest) {
+  const authHeader = request.headers.get('authorization');
+  let token: string | null = null;
+
+  if (authHeader?.startsWith('Bearer ')) {
+    token = authHeader.substring(7);
+  }
+
+  if (!token) {
+    return null;
+  }
+
+  const tokenPayload = decodeJWT(token);
+  if (!tokenPayload?.sub) {
+    return null;
+  }
+
+  const userId = tokenPayload.sub;
+
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('id, email, full_name, branch_id, role_id, is_active')
+    .eq('id', userId)
+    .single();
+
+  if (error || !profile || !profile.is_active) {
+    return null;
+  }
+
+  return profile;
+}
+
 /**
  * GET /api/products - Fetch all products with filters
  */
@@ -104,6 +148,11 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized - Please log in' }, { status: 401 });
+    }
     const body = await request.json();
 
     // Validate input
@@ -134,6 +183,7 @@ export async function POST(request: NextRequest) {
           reorder_level: validatedData.reorder_level,
           description: validatedData.description,
           status: validatedData.status,
+          branch_id: user.branch_id || null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
