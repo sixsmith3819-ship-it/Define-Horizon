@@ -35,7 +35,7 @@ export function ProductTable({ products, isLoading = false, onEdit }: ProductTab
   const router = useRouter();
 
   const handleRowClick = (id: string) => {
-    router.push(`/dashboard/inventory/${id}`);
+    router.push(`/inventory/${id}`);
   };
 
   if (isLoading) {
@@ -55,7 +55,7 @@ export function ProductTable({ products, isLoading = false, onEdit }: ProductTab
         <div className="text-center">
           <p className="text-gray-500 text-lg">No products found</p>
           <button
-            onClick={() => router.push('/dashboard/inventory/new')}
+            onClick={() => router.push('/inventory/new')}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Add First Product

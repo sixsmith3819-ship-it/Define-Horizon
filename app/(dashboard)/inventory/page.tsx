@@ -109,7 +109,7 @@ export default function InventoryPage() {
           <p className="text-gray-600 mt-1">Manage your product inventory</p>
         </div>
         <Link
-          href="/dashboard/inventory/new"
+          href="/inventory/new"
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
         >
           + Add Product

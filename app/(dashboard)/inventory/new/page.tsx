@@ -32,7 +32,7 @@ export default function NewProductPage() {
 
       // Show success message and redirect
       alert(`Product "${result.name}" created successfully!`);
-      router.push(`/dashboard/inventory/${result.id}`);
+      router.push(`/inventory/${result.id}`);
     } catch (error) {
       console.error('Error creating product:', error);
       throw error;
@@ -51,7 +51,7 @@ export default function NewProductPage() {
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-600">
-        <Link href="/dashboard/inventory" className="text-blue-600 hover:underline">
+        <Link href="/inventory" className="text-blue-600 hover:underline">
           Inventory
         </Link>
         <span>→</span>
