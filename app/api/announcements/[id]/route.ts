@@ -67,3 +67,48 @@ export async function GET(
     return NextResponse.json({ error: 'Failed to fetch announcement' }, { status: 500 });
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const body = await request.json();
+    const { title, content, priority, status, visibility_type, expiry_date } = body;
+
+    if (!title || !content) {
+      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from('announcements')
+      .update({
+        title,
+        content,
+        priority,
+        status,
+        visibility_type,
+        expiry_date,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json({ error: 'Failed to update announcement' }, { status: 500 });
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('PATCH announcement error:', error);
+    return NextResponse.json({ error: 'Failed to update announcement' }, { status: 500 });
+  }
+}

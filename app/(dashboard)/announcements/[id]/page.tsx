@@ -93,7 +93,7 @@ export default function AnnouncementDetailPage() {
 
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify(editFormData),
       });
 
@@ -118,7 +118,7 @@ export default function AnnouncementDetailPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify({ status: 'published' }),
       });
 
@@ -137,7 +137,7 @@ export default function AnnouncementDetailPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify({ status: 'archived' }),
       });
 
@@ -155,7 +155,7 @@ export default function AnnouncementDetailPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify({ hard_delete: true }),
       });
 
