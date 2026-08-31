@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -39,7 +39,7 @@ export default function AnnouncementsPage() {
         ...(searchTerm && { search: searchTerm }),
       });
 
-      const res = await fetch(`/api/announcements?${params.toString()}`);
+      const res = await fetch(`/api/announcements?${params.toString()}`, { headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` } });
       if (!res.ok) throw new Error('Failed to fetch announcements');
 
       const result = await res.json();
@@ -58,7 +58,7 @@ export default function AnnouncementsPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify({ status: 'archived' }),
       });
 
@@ -75,7 +75,7 @@ export default function AnnouncementsPage() {
     try {
       const res = await fetch(`/api/announcements/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         body: JSON.stringify({ hard_delete: true }),
       });
 

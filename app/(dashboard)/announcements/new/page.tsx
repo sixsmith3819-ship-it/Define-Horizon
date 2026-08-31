@@ -26,7 +26,7 @@ export default function NewAnnouncementPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [publishMode, setPublishMode] = useState<'draft' | 'publish'>('draft');
+  const [publishMode, setPublishMode] = useState<'draft' | 'published'>('draft');
 
   function validateForm() {
     const newErrors: Record<string, string> = {};
@@ -326,7 +326,7 @@ export default function NewAnnouncementPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setPublishMode('publish');
+                    setPublishMode('published');
                     if (validateForm()) {
                       handleSubmit({
                         preventDefault: () => {},
