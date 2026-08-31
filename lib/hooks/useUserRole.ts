@@ -1,5 +1,5 @@
-// lib/hooks/useUserRole.ts - Custom hook to fetch user role from database
-import { useEffect, useState } from 'react';
+// lib/hooks/useUserRole.ts - Custom hook to get user role from localStorage
+import { useEffect, useState } from "react";
 
 interface UserProfile {
   user_id: string;
@@ -12,56 +12,68 @@ interface UserProfile {
 }
 
 export function useUserRole() {
-  const [userRole, setUserRole] = useState<string>('employee');
+  const [userRole, setUserRole] = useState<string>("employee");
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchUserProfile() {
+    async function fetchUserRole() {
       try {
-        const token = localStorage.getItem('access_token');
+        // PRIMARY: Get role from localStorage (set during login)
+        const storedRole = localStorage.getItem("user_role");
+        if (storedRole) {
+          setUserRole(storedRole);
+          setLoading(false);
+          return;
+        }
+
+        // FALLBACK: Try fetching from API if not in localStorage
+        const token = localStorage.getItem("access_token");
         if (!token) {
-          setUserRole('employee');
+          setUserRole("employee");
           setLoading(false);
           return;
         }
 
         // Fetch user profile with role from database
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch("/api/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch user profile');
+        if (response.ok) {
+          const profile = await response.json();
+          setUserProfile(profile);
+          setUserRole(profile.role || "employee");
+          // Store for next time
+          localStorage.setItem("user_role", profile.role || "employee");
+          setError(null);
+        } else {
+          // If API fails, default to employee
+          setUserRole("employee");
         }
-
-        const profile = await response.json();
-        setUserProfile(profile);
-        setUserRole(profile.role || 'employee');
-        setError(null);
       } catch (err) {
-        console.error('Failed to fetch user role:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch role');
-        setUserRole('employee'); // Default to employee on error
+        console.error("Failed to fetch user role:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch role");
+        setUserRole("employee"); // Default to employee on error
       } finally {
         setLoading(false);
       }
     }
 
-    fetchUserProfile();
+    fetchUserRole();
   }, []);
 
-  return { 
-    userRole, 
-    userProfile, 
-    loading, 
+  return {
+    userRole,
+    userProfile,
+    loading,
     error,
-    isSuperAdmin: userRole === 'super_admin',
-    isEmployee: userRole === 'employee',
-    isBranchManager: userRole === 'branch_manager',
-    isAuditor: userRole === 'auditor',
+    isSuperAdmin: userRole === "super_admin",
+    isEmployee: userRole === "employee",
+    isBranchManager: userRole === "branch_manager",
+    isAuditor: userRole === "auditor",
   };
 }

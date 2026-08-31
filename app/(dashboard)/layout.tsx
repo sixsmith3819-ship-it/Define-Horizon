@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 /* eslint-disable react-hooks/set-state-in-effect */
-import { Sidebar } from '@/components/layout/sidebar';
-import { TopBar } from '@/components/layout/top-bar';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Sidebar } from "@/components/layout/sidebar";
+import { TopBar } from "@/components/layout/top-bar";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,12 +12,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has valid session token
-    const token = localStorage.getItem('access_token');
+    // Simple auth check - just verify token exists
+    const token = localStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
     } else {
-      router.push('/login');
+      router.push("/login");
     }
     setLoading(false);
   }, [router]);

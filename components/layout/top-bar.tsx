@@ -37,6 +37,7 @@ export function TopBar() {
       console.error("Logout error:", error);
     } finally {
       localStorage.removeItem("access_token");
+      localStorage.removeItem("user_role");
       setShowMenu(false);
       router.push("/login");
     }

@@ -17,6 +17,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Clear any existing auth
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_role');
   }, []);
 
   if (!mounted) return null;
@@ -41,8 +44,17 @@ export default function LoginPage() {
         return;
       }
 
+      // Store auth data
       localStorage.setItem('access_token', data.access_token);
-      router.push('/');
+      localStorage.setItem('user_role', data.role);
+
+      // Role-based routing - SIMPLIFIED
+      if (data.role === 'super_admin') {
+        router.push('/');
+      } else {
+        // employee, branch_manager, auditor all go to main dashboard
+        router.push('/');
+      }
     } catch {
       setError('Network error - please try again');
       setLoading(false);
@@ -166,7 +178,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <div className="mt-6 pt-4 border-t border-white/10 text-center">
-            <p className="text-white/50 text-xs">© 2025 Define Horizon BMS</p>
+            <p className="text-white/50 text-xs">2025 Define Horizon BMS</p>
           </div>
         </div>
       </div>

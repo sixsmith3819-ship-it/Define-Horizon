@@ -51,7 +51,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return token to be stored in localStorage
+    // Fetch user role from database
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select(`
+        id,
+        email,
+        full_name,
+        role_id,
+        roles (
+          id,
+          name
+        )
+      `)
+      .eq('email', email)
+      .single();
+
+    // Get role name - default to employee if no profile exists
+    let roleName = 'employee';
+    if (profile && !profileError) {
+      const rolesArray = profile.roles as Array<{ id: string; name: string }> | null;
+      roleName = rolesArray?.[0]?.name || 'employee';
+    }
+
+    // Return token and role to be stored in localStorage
     const response = NextResponse.json({
       success: true,
       access_token: data.session.access_token,
@@ -60,6 +83,7 @@ export async function POST(request: NextRequest) {
         id: data.user.id,
         email: data.user.email,
       },
+      role: roleName,
     });
 
     return response;
