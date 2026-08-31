@@ -1,4 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -13,10 +14,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client with anon key
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    const cookieStore = await cookies();
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // Ignore errors
+            }
+          },
+        },
+      }
     );
 
     // Sign in with password
@@ -33,23 +51,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return session
+    // Return success - cookies are now set via Supabase SSR
     return NextResponse.json({
       success: true,
-      session: {
-        user: {
-          id: data.user.id,
-          email: data.user.email,
-        },
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
+      user: {
+        id: data.user.id,
+        email: data.user.email,
       },
     });
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
