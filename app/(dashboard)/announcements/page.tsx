@@ -16,6 +16,7 @@ export default function AnnouncementsPage() {
   const router = useRouter();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string>('employee');
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<AnnouncementStatus | 'all'>('all');
@@ -25,6 +26,26 @@ export default function AnnouncementsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
+    // Decode JWT to get user role
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUserRole(payload.user_metadata?.role || payload.role || 'employee');
+      } catch (e) {
+        console.error('Failed to decode token:', e);
+      }
+    }
+    // Decode JWT to get user role
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUserRole(payload.user_metadata?.role || payload.role || 'employee');
+      } catch (e) {
+        console.error('Failed to decode token:', e);
+      }
+    }
     fetchAnnouncements();
   }, [page, statusFilter, priorityFilter, searchTerm]);
 
@@ -138,13 +159,11 @@ export default function AnnouncementsPage() {
             <h1 className="text-4xl font-bold text-gradient-primary mb-2">Announcements</h1>
             <p className="text-slate-600 text-lg">Company-wide communications and updates</p>
           </div>
-          <Link
-            href="/announcements/new"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium"
+          {userRole === 'super_admin' && (<Link href="/announcements/new" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 font-medium"
           >
             <Plus className="w-5 h-5" />
             New Announcement
-          </Link>
+          </Link>)}
         </div>
       </div>
 
@@ -476,3 +495,4 @@ export default function AnnouncementsPage() {
     </div>
   );
 }
+
