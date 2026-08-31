@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get employee role ID - looking for 'employee' role
+    // Get employee role ID
     const { data: employeeRole } = await supabase
       .from('roles')
       .select('id')
@@ -81,10 +81,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create user account' }, { status: 500 });
     }
 
-    // Create profile - only insert fields that actually exist in the table
+    // Create profile with correct column names
     const { error: profileError } = await supabase.from('profiles').insert([
       {
-        user_id: authData.user.id,
+        id: authData.user.id,
         email: email.toLowerCase(),
         full_name: full_name,
         phone_number: phone_number,
