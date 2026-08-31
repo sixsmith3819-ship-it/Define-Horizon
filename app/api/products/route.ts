@@ -47,19 +47,20 @@ async function getAuthenticatedUser(request: NextRequest) {
   const userEmail = tokenPayload.email;
 
   // Fetch profile with role information by email
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select(
-      id, 
+  const selectQuery = `id, 
       email, 
       full_name, 
       branch_id, 
       role_id, 
       is_active,
-      role:roles!role_id (
-        role_name
-      )
-    )
+      roles (
+        id,
+        name
+      )`;
+
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select(selectQuery)
     .eq('email', userEmail)
     .single();
 
@@ -67,9 +68,12 @@ async function getAuthenticatedUser(request: NextRequest) {
     return null;
   }
 
+  const rolesArray = profile.roles as Array<{ id: string; name: string }> | null;
+  const roleData = rolesArray?.[0];
+
   return {
     ...profile,
-    role_name: profile.role?.role_name || 'employee'
+    role_name: roleData?.name || 'employee'
   };
 }
 
@@ -106,9 +110,8 @@ export async function GET(request: NextRequest) {
 
     // Apply search filter (search by name or SKU)
     if (validatedFilters.search) {
-      query = query.or(
-        `name.ilike.%${validatedFilters.search}%,sku.ilike.%${validatedFilters.search}%`
-      );
+      const searchStr = `name.ilike.%${validatedFilters.search}%,sku.ilike.%${validatedFilters.search}%`;
+      query = query.or(searchStr);
     }
 
     // Get data with pagination
@@ -192,12 +195,12 @@ export async function POST(request: NextRequest) {
           name: validatedData.name,
           category: validatedData.category,
           buying_price: validatedData.buying_price,
-          unit_cost: validatedData.buying_price, // Map to unit_cost for database
+          unit_cost: validatedData.buying_price,
           selling_price: validatedData.selling_price,
-          unit_price: validatedData.selling_price, // Map to unit_price for database
+          unit_price: validatedData.selling_price,
           quantity: validatedData.quantity,
           reorder_level: validatedData.reorder_level,
-          reorder_point: validatedData.reorder_level, // Map to reorder_point for database
+          reorder_point: validatedData.reorder_level,
           description: validatedData.description,
           status: validatedData.status,
           branch_id: user.branch_id || null,

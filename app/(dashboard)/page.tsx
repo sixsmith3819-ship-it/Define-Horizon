@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useUserRole } from '@/lib/hooks/useUserRole';
+import { useEffect, useState } from "react";
+import { useUserRole } from "@/lib/hooks/useUserRole";
 import {
   Users,
   ArrowUpDown,
@@ -11,8 +11,12 @@ import {
   ArrowUp,
   Loader,
   Bell,
-} from 'lucide-react';
-import Link from 'next/link';
+  TrendingUp,
+  UserCheck,
+  UserX,
+  AlertCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 interface DashboardMetrics {
   totalCustomers: number;
@@ -21,10 +25,18 @@ interface DashboardMetrics {
   serviceCharges: number;
 }
 
+interface UserMetrics {
+  total_users: number;
+  active_users: number;
+  inactive_users: number;
+  pending_invitations: number;
+  new_this_month: number;
+}
+
 interface Transaction {
   id: string;
   amount: number;
-  direction: 'inbound' | 'outbound';
+  direction: "inbound" | "outbound";
   provider: {
     name: string;
   };
@@ -40,7 +52,7 @@ interface Announcement {
   id: string;
   title: string;
   content: string;
-  priority: 'urgent' | 'high' | 'normal' | 'low';
+  priority: "urgent" | "high" | "normal" | "low";
   status: string;
   created_at: string;
 }
@@ -77,29 +89,45 @@ export default function DashboardPage() {
     totalRevenue: 0,
     serviceCharges: 0,
   });
+  const [userMetrics, setUserMetrics] = useState<UserMetrics>({
+    total_users: 0,
+    active_users: 0,
+    inactive_users: 0,
+    pending_invitations: 0,
+    new_this_month: 0,
+  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { userRole, isSuperAdmin, loading: roleLoading } = useUserRole();
 
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem("access_token");
 
-        // Fetch metrics (only if super admin)
+        // Fetch transaction metrics (for all users)
         if (isSuperAdmin) {
-          const metricsRes = await fetch('/api/dashboard/metrics', {
-            headers: { Authorization: `Bearer ${token}` }
+          const metricsRes = await fetch("/api/dashboard/metrics", {
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (metricsRes.ok) {
             const data = await metricsRes.json();
             setMetrics(data.data || data);
           }
+
+          // Fetch user management metrics (super admin only)
+          const userMetricsRes = await fetch("/api/dashboard/metrics");
+          if (userMetricsRes.ok) {
+            const data = await userMetricsRes.json();
+            if (data.success && data.data?.summary) {
+              setUserMetrics(data.data.summary);
+            }
+          }
         }
 
         // Fetch recent transactions (for all users)
-        const txRes = await fetch('/api/transactions?limit=10', {
-          headers: { Authorization: `Bearer ${token}` }
+        const txRes = await fetch("/api/transactions?limit=10", {
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (txRes.ok) {
           const data = await txRes.json();
@@ -107,16 +135,16 @@ export default function DashboardPage() {
         }
 
         // Fetch announcements (published only, for all users)
-        const announcementsRes = await fetch('/api/announcements?status=published&limit=5', {
-          headers: { Authorization: `Bearer ${token}` }
+        const announcementsRes = await fetch("/api/announcements?status=published&limit=5", {
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (announcementsRes.ok) {
           const data = await announcementsRes.json();
           setAnnouncements(data.data || []);
         }
       } catch (err) {
-        console.error('Failed to load dashboard:', err);
-        setError('Failed to load dashboard data');
+        console.error("Failed to load dashboard:", err);
+        setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
       }
@@ -151,16 +179,16 @@ export default function DashboardPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent':
-        return 'bg-red-100 text-red-800 border-red-300';
-      case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'normal':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'low':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+      case "urgent":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "high":
+        return "bg-orange-100 text-orange-800 border-orange-300";
+      case "normal":
+        return "bg-blue-100 text-blue-800 border-blue-300";
+      case "low":
+        return "bg-gray-100 text-gray-800 border-gray-300";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
 
@@ -171,9 +199,50 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
         <p className="text-gray-600">
           Welcome to Define Horizon BMS
-          {userRole && <span className="ml-2 text-sm text-gray-500">({userRole.replace('_', ' ')})</span>}
+          {userRole && (
+            <span className="ml-2 text-sm text-gray-500">({userRole.replace("_", " ")})</span>
+          )}
         </p>
       </div>
+
+      {/* SUPER ADMIN SECTION - User Management Metrics */}
+      {isSuperAdmin && (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">User Management Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <MetricCard
+              title="Total Users"
+              value={userMetrics.total_users}
+              borderColor="border-blue-500"
+              icon={Users}
+            />
+            <MetricCard
+              title="Active Users"
+              value={userMetrics.active_users}
+              borderColor="border-green-500"
+              icon={UserCheck}
+            />
+            <MetricCard
+              title="Inactive Users"
+              value={userMetrics.inactive_users}
+              borderColor="border-orange-500"
+              icon={UserX}
+            />
+            <MetricCard
+              title="Pending Invitations"
+              value={userMetrics.pending_invitations}
+              borderColor="border-yellow-500"
+              icon={AlertCircle}
+            />
+            <MetricCard
+              title="New This Month"
+              value={userMetrics.new_this_month}
+              borderColor="border-purple-500"
+              icon={TrendingUp}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Announcements Section - Show for all users */}
       {announcements.length > 0 && (
@@ -183,7 +252,7 @@ export default function DashboardPage() {
               <Bell className="w-5 h-5 text-blue-600" />
               Recent Announcements
             </h2>
-            <Link 
+            <Link
               href="/announcements"
               className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             >
@@ -205,7 +274,11 @@ export default function DashboardPage() {
                       {new Date(announcement.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs font-semibold border ${getPriorityColor(announcement.priority)}`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-semibold border ${getPriorityColor(
+                      announcement.priority
+                    )}`}
+                  >
                     {announcement.priority}
                   </span>
                 </div>
@@ -215,7 +288,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Metrics Grid - Show ONLY for super_admin */}
+      {/* SUPER ADMIN SECTION - Transaction Metrics */}
       {isSuperAdmin && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard
@@ -249,7 +322,7 @@ export default function DashboardPage() {
       <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Recent Transactions</h2>
-          <Link 
+          <Link
             href="/transactions"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
           >
@@ -287,7 +360,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        {tx.direction === 'inbound' ? (
+                        {tx.direction === "inbound" ? (
                           <>
                             <ArrowDown className="w-4 h-4 text-green-600" />
                             <span className="text-sm text-green-600 font-medium">Inbound</span>
@@ -303,11 +376,11 @@ export default function DashboardPage() {
                     <td className="py-3 px-4">
                       <span
                         className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                          tx.status === 'completed'
-                            ? 'bg-green-100 text-green-800'
-                            : tx.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
+                          tx.status === "completed"
+                            ? "bg-green-100 text-green-800"
+                            : tx.status === "pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                         }`}
                       >
                         {tx.status}
