@@ -60,7 +60,9 @@ export default function CustomersReportPage() {
             <tbody className="divide-y">
               {customers.map((c: any) => (
                 <tr key={c.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">{c.first_name} {c.last_name}</td>
+                  <td className="px-6 py-4">
+                    {c.first_name} {c.last_name}
+                  </td>
                   <td className="px-6 py-4">{c.email}</td>
                   <td className="px-6 py-4">{c.phone_number || '-'}</td>
                   <td className="px-6 py-4">{c.physical_address || '-'}</td>

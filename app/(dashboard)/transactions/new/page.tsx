@@ -99,7 +99,8 @@ export default function NewTransactionPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Create New Transaction</h1>
         <p className="mt-2 text-gray-600">
-          Fill in the form below to create a new transaction. Service charges will be calculated automatically.
+          Fill in the form below to create a new transaction. Service charges will be calculated
+          automatically.
         </p>
       </div>
 
@@ -123,7 +124,9 @@ export default function NewTransactionPage() {
       <div className="bg-white rounded-lg shadow p-6">
         {customers.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No customers found. Please create a customer first.</p>
+            <p className="text-gray-600 mb-4">
+              No customers found. Please create a customer first.
+            </p>
             <Link
               href="/customers/new"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -132,11 +135,7 @@ export default function NewTransactionPage() {
             </Link>
           </div>
         ) : (
-          <TransactionForm
-            customers={customers}
-            onSubmit={handleSubmit}
-            isLoading={isSubmitting}
-          />
+          <TransactionForm customers={customers} onSubmit={handleSubmit} isLoading={isSubmitting} />
         )}
       </div>
 
@@ -148,7 +147,8 @@ export default function NewTransactionPage() {
           <li>• International transactions: 10%</li>
         </ul>
         <p className="text-xs text-blue-700 mt-3">
-          The service charge will be calculated automatically based on the transaction type and amount you enter.
+          The service charge will be calculated automatically based on the transaction type and
+          amount you enter.
         </p>
       </div>
     </div>

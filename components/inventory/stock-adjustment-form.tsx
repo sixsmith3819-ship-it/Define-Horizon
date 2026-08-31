@@ -49,7 +49,8 @@ export function StockAdjustmentForm({
   });
 
   const quantity = watch('quantity') || 0;
-  const resultingQuantity = adjustmentType === 'in' ? currentQuantity + quantity : currentQuantity - quantity;
+  const resultingQuantity =
+    adjustmentType === 'in' ? currentQuantity + quantity : currentQuantity - quantity;
 
   const handleFormSubmit = async (data: StockAdjustmentFormData) => {
     try {
@@ -82,40 +83,42 @@ export function StockAdjustmentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className='space-y-4'>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       {error && (
-        <div className='p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm'>
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
         </div>
       )}
 
       {success && (
-        <div className='p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm'>
+        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
           {success}
         </div>
       )}
 
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>
-          Quantity <span className='text-red-500'>*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Quantity <span className="text-red-500">*</span>
         </label>
         <input
-          type='number'
+          type="number"
           {...register('quantity', { valueAsNumber: true })}
-          placeholder='0'
-          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+          placeholder="0"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={isLoading || isSubmitting}
         />
-        {errors.quantity && <p className='text-red-500 text-sm mt-1'>{renderError(errors.quantity)}</p>}
+        {errors.quantity && (
+          <p className="text-red-500 text-sm mt-1">{renderError(errors.quantity)}</p>
+        )}
       </div>
 
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>
-          Reason <span className='text-red-500'>*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Reason <span className="text-red-500">*</span>
         </label>
         <select
           {...register('reason')}
-          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={isLoading || isSubmitting}
         >
           {STOCK_REASONS.map((reason) => (
@@ -124,28 +127,28 @@ export function StockAdjustmentForm({
             </option>
           ))}
         </select>
-        {errors.reason && <p className='text-red-500 text-sm mt-1'>{renderError(errors.reason)}</p>}
+        {errors.reason && <p className="text-red-500 text-sm mt-1">{renderError(errors.reason)}</p>}
       </div>
 
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-2'>Reference / Document</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Reference / Document</label>
         <input
-          type='text'
+          type="text"
           {...register('reference')}
-          placeholder='e.g., Invoice #, Reference number'
-          className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+          placeholder="e.g., Invoice #, Reference number"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={isLoading || isSubmitting}
         />
       </div>
 
       {/* Result Preview */}
-      <div className='p-3 bg-gray-50 border border-gray-200 rounded-lg'>
-        <p className='text-xs text-gray-600 mb-1'>Result:</p>
-        <div className='flex justify-between items-center'>
-          <span className='text-sm text-gray-700'>
+      <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <p className="text-xs text-gray-600 mb-1">Result:</p>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-700">
             Current: <strong>{currentQuantity}</strong>
           </span>
-          <span className='text-gray-400'>→</span>
+          <span className="text-gray-400">→</span>
           <span
             className={`text-sm font-semibold ${
               resultingQuantity < 0 ? 'text-red-600' : 'text-green-600'
@@ -158,7 +161,7 @@ export function StockAdjustmentForm({
       </div>
 
       <button
-        type='submit'
+        type="submit"
         disabled={isLoading || isSubmitting || resultingQuantity < 0}
         className={`w-full px-4 py-2 rounded-lg font-medium text-white transition ${
           adjustmentType === 'in'
@@ -168,7 +171,7 @@ export function StockAdjustmentForm({
       >
         {isLoading || isSubmitting ? (
           <>
-            <span className='inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></span>
+            <span className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
             Processing...
           </>
         ) : (

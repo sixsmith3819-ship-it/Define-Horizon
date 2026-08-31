@@ -1,11 +1,11 @@
 /**
  * Zod Validation Schemas
- * 
+ *
  * This directory contains Zod schemas for:
  * - Form validation
  * - API request/response validation
  * - Database model validation
- * 
+ *
  * Usage: import { CustomerSchema, TransactionSchema } from '@/lib/schemas'
  */
 

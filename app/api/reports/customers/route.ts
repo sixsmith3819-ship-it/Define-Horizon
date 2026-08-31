@@ -16,7 +16,9 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('customers')
-      .select('id, first_name, last_name, email, national_id, physical_address, branch_id, created_at');
+      .select(
+        'id, first_name, last_name, email, national_id, physical_address, branch_id, created_at'
+      );
 
     if (search) {
       query = query.or(`first_name.ilike.%${search}%,last_name.ilike.%${search}%`);

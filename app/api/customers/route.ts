@@ -80,10 +80,7 @@ export async function GET() {
     return NextResponse.json(data || []);
   } catch (error) {
     console.error('Error fetching customers:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch customers' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch customers' }, { status: 500 });
   }
 }
 
@@ -92,14 +89,11 @@ export async function POST(request: NextRequest) {
     // Get authenticated user
     const user = await getAuthenticatedUser(request);
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized - Please log in' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized - Please log in' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Map frontend field names to database column names
     const customerData = {
       first_name: body.first_name,
@@ -112,10 +106,7 @@ export async function POST(request: NextRequest) {
       created_by: user.user_id, // Use authenticated user''s ID
     };
 
-    const { data, error } = await supabase
-      .from('customers')
-      .insert([customerData])
-      .select();
+    const { data, error } = await supabase.from('customers').insert([customerData]).select();
 
     if (error) {
       console.error('Database error creating customer:', error);
@@ -125,13 +116,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data?.[0] || {}, { status: 201 });
   } catch (error) {
     console.error('Error creating customer:', error);
-    
+
     // Return more specific error message if available
     const errorMessage = error instanceof Error ? error.message : 'Failed to create customer';
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

@@ -14,22 +14,14 @@ interface PageContainerProps {
 }
 
 const widthClasses: Record<ContainerWidth, string> = {
-  narrow: 'max-w-2xl',    // 672px - Simple forms
-  standard: 'max-w-4xl',  // 896px - Standard forms  
-  wide: 'max-w-6xl',      // 1152px - Complex forms
-  full: 'max-w-7xl',      // 1280px - Tables, dashboards
+  narrow: 'max-w-2xl', // 672px - Simple forms
+  standard: 'max-w-4xl', // 896px - Standard forms
+  wide: 'max-w-6xl', // 1152px - Complex forms
+  full: 'max-w-7xl', // 1280px - Tables, dashboards
 };
 
-export function PageContainer({ 
-  children, 
-  width = 'full',
-  className = '' 
-}: PageContainerProps) {
-  return (
-    <div className={`mx-auto ${widthClasses[width]} ${className}`}>
-      {children}
-    </div>
-  );
+export function PageContainer({ children, width = 'full', className = '' }: PageContainerProps) {
+  return <div className={`mx-auto ${widthClasses[width]} ${className}`}>{children}</div>;
 }
 
 /**

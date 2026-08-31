@@ -43,7 +43,9 @@ export class AuditLogger {
   }
 
   static async logBranchUpdated(branchId: string, branchName: string, changes?: string) {
-    const details = changes ? `Branch updated: ${branchName} - ${changes}` : `Branch updated: ${branchName}`;
+    const details = changes
+      ? `Branch updated: ${branchName} - ${changes}`
+      : `Branch updated: ${branchName}`;
     await this.log('branch_updated', 'branch', branchId, details);
   }
 
@@ -57,12 +59,19 @@ export class AuditLogger {
 
   // Report-related logging
   static async logReportGenerated(reportType: string, filters?: string) {
-    const details = filters ? `${reportType} report generated - ${filters}` : `${reportType} report generated`;
+    const details = filters
+      ? `${reportType} report generated - ${filters}`
+      : `${reportType} report generated`;
     await this.log('report_generated', 'report', reportType, details);
   }
 
   static async logReportExported(reportType: string, format: string) {
-    await this.log('report_exported', 'report', reportType, `${reportType} report exported as ${format}`);
+    await this.log(
+      'report_exported',
+      'report',
+      reportType,
+      `${reportType} report exported as ${format}`
+    );
   }
 
   // Dashboard logging
@@ -98,7 +107,12 @@ export class AuditLogger {
 
   // Search/Filter logging
   static async logSearch(searchType: string, query: string) {
-    await this.log('search_performed', 'search', `search-${Date.now()}`, `${searchType} search: ${query}`);
+    await this.log(
+      'search_performed',
+      'search',
+      `search-${Date.now()}`,
+      `${searchType} search: ${query}`
+    );
   }
 
   // Export logging
@@ -113,7 +127,12 @@ export class AuditLogger {
 
   // User-specific logging
   static async logUserManagementViewed() {
-    await this.log('user_management_viewed', 'user_management', 'all', 'User management page accessed');
+    await this.log(
+      'user_management_viewed',
+      'user_management',
+      'all',
+      'User management page accessed'
+    );
   }
 
   static async logUserViewed(userId: string, userName?: string) {

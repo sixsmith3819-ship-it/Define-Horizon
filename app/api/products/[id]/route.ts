@@ -4,7 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { updateProductSchema } from '@/lib/validations/product';
-import { calculateProfitMargin, calculateStockValue, getStockStatus } from '@/lib/utils/stock-calculations';
+import {
+  calculateProfitMargin,
+  calculateStockValue,
+  getStockStatus,
+} from '@/lib/utils/stock-calculations';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,19 +18,13 @@ const supabase = createClient(
 /**
  * GET /api/products/[id] - Get single product
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const productId = (await params).id;
 
     // Validate UUID format
     if (!isValidUUID(productId)) {
-      return NextResponse.json(
-        { error: 'Invalid product ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid product ID format' }, { status: 400 });
     }
 
     const { data, error } = await supabase
@@ -37,10 +35,7 @@ export async function GET(
 
     if (error && error.code === 'PGRST116') {
       // No rows returned
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     if (error) throw error;
@@ -56,30 +51,21 @@ export async function GET(
     return NextResponse.json(productWithMetrics);
   } catch (error) {
     console.error('Error fetching product:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
   }
 }
 
 /**
  * PUT /api/products/[id] - Update product
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const productId = (await params).id;
     const body = await request.json();
 
     // Validate UUID format
     if (!isValidUUID(productId)) {
-      return NextResponse.json(
-        { error: 'Invalid product ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid product ID format' }, { status: 400 });
     }
 
     // Validate input
@@ -95,10 +81,7 @@ export async function PUT(
         .single();
 
       if (existingSku) {
-        return NextResponse.json(
-          { error: 'SKU already exists' },
-          { status: 409 }
-        );
+        return NextResponse.json({ error: 'SKU already exists' }, { status: 409 });
       }
     }
 
@@ -117,10 +100,7 @@ export async function PUT(
       .single();
 
     if (error && error.code === 'PGRST116') {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     if (error) throw error;
@@ -144,10 +124,7 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to update product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
 
@@ -163,10 +140,7 @@ export async function DELETE(
 
     // Validate UUID format
     if (!isValidUUID(productId)) {
-      return NextResponse.json(
-        { error: 'Invalid product ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid product ID format' }, { status: 400 });
     }
 
     // Soft delete by marking as inactive
@@ -181,10 +155,7 @@ export async function DELETE(
       .single();
 
     if (error && error.code === 'PGRST116') {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     if (error) throw error;
@@ -195,10 +166,7 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('Error deleting product:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
   }
 }
 

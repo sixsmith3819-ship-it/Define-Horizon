@@ -1,7 +1,7 @@
 /**
  * GET /api/users/export
  * Export users to CSV, Excel, or PDF format
- * 
+ *
  * Requirements: 11.3, 11.4, 11.5
  */
 
@@ -21,10 +21,7 @@ export async function GET(request: NextRequest) {
 
     // Validate format
     if (!['csv', 'excel', 'pdf'].includes(format)) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid export format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid export format' }, { status: 400 });
     }
 
     const supabase = createServerComponentClient();
@@ -37,10 +34,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check permission: admin or auditor
@@ -74,9 +68,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build query to fetch users
-    let query = supabase
-      .from('profiles')
-      .select(`
+    let query = supabase.from('profiles').select(`
         id,
         email,
         full_name,
@@ -94,7 +86,7 @@ export async function GET(request: NextRequest) {
 
     // If specific user IDs provided, filter by them
     if (userIdsParam) {
-      const userIds = userIdsParam.split(',').filter(id => id.trim());
+      const userIds = userIdsParam.split(',').filter((id) => id.trim());
       query = query.in('id', userIds);
     } else {
       // Apply filters
@@ -149,14 +141,14 @@ export async function GET(request: NextRequest) {
     });
 
     // Format data for export
-    const exportData = users.map(user => ({
+    const exportData = users.map((user) => ({
       'User ID': user.id,
       'Full Name': user.full_name,
-      'Email': user.email,
+      Email: user.email,
       'Phone Number': user.phone_number || '',
-      'Role': user.roles?.[0]?.name || 'Unknown',
-      'Branch': user.branches?.[0]?.name || 'Unknown',
-      'Status': user.is_active ? 'Active' : 'Inactive',
+      Role: user.roles?.[0]?.name || 'Unknown',
+      Branch: user.branches?.[0]?.name || 'Unknown',
+      Status: user.is_active ? 'Active' : 'Inactive',
       'Last Login': user.last_login_timestamp || 'Never',
       'Login Count': user.login_count || 0,
       'Password Last Changed': user.password_last_changed || 'Never',
@@ -206,7 +198,8 @@ export async function GET(request: NextRequest) {
         const filename = `users_export_${timestamp}.pdf`;
 
         // TODO: Convert to actual PDF format with headers, footers, and formatting
-        const buffer = convertToPDF(exportData); return new Response(buffer as any, {
+        const buffer = convertToPDF(exportData);
+        return new Response(buffer as any, {
           status: 200,
           headers: {
             'Content-Type': 'application/pdf',
@@ -216,17 +209,11 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { success: false, error: 'Invalid format' },
-          { status: 400 }
-        );
+        return NextResponse.json({ success: false, error: 'Invalid format' }, { status: 400 });
     }
   } catch (error) {
     console.error('GET /api/users/export error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -238,14 +225,16 @@ function convertToCSV(data: any[]): string {
 
   // Get headers from first object
   const headers = Object.keys(data[0]);
-  const headerRow = headers.map(h => escapeCSVField(h)).join(',');
+  const headerRow = headers.map((h) => escapeCSVField(h)).join(',');
 
   // Convert rows
-  const rows = data.map(row => {
-    return headers.map(header => {
-      const value = row[header];
-      return escapeCSVField(String(value || ''));
-    }).join(',');
+  const rows = data.map((row) => {
+    return headers
+      .map((header) => {
+        const value = row[header];
+        return escapeCSVField(String(value || ''));
+      })
+      .join(',');
   });
 
   return [headerRow, ...rows].join('\n');
@@ -270,7 +259,11 @@ function convertToPDF(data: any[]): Buffer {
   // This is a placeholder - in production use pdfkit or similar
   // For now, return basic text content
   const content = data
-    .map(row => Object.entries(row).map(([k, v]) => `${k}: ${v}`).join('\n'))
+    .map((row) =>
+      Object.entries(row)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n')
+    )
     .join('\n\n---\n\n');
 
   return Buffer.from(content);

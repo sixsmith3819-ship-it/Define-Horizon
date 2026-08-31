@@ -109,7 +109,9 @@ export default function TransactionsReportPage() {
                   <td className="px-4 py-3">{t.transaction_type}</td>
                   <td className="px-4 py-3">${(t.amount || 0).toFixed(2)}</td>
                   <td className="px-4 py-3">${(t.service_charge || 0).toFixed(2)}</td>
-                  <td className="px-4 py-3 font-semibold text-green-700">${((t.amount || 0) + (t.service_charge || 0)).toFixed(2)}</td>
+                  <td className="px-4 py-3 font-semibold text-green-700">
+                    ${((t.amount || 0) + (t.service_charge || 0)).toFixed(2)}
+                  </td>
                   <td className="px-4 py-3">{new Date(t.created_at).toLocaleDateString()}</td>
                 </tr>
               ))}

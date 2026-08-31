@@ -1,6 +1,6 @@
 /**
  * POST /api/auth/verify-session
- * 
+ *
  * Verifies and optionally refreshes a user session by:
  * 1. Extracting token from request or auth header
  * 2. Validating token with Supabase getUser()
@@ -9,7 +9,7 @@
  * 5. Checking user is_active status
  * 6. Refreshing token if expired and refresh_token provided
  * 7. Returning user profile and tokens
- * 
+ *
  * Requirements: 17.4, 17.5, 17.6
  */
 
@@ -72,7 +72,8 @@ export async function POST(request: NextRequest) {
       const sessionCookie = request.cookies.get('auth_session');
       if (sessionCookie) {
         try {
-          const sessionData = JSON.parse(sessionCookie.value); token = sessionData.access_token || undefined;
+          const sessionData = JSON.parse(sessionCookie.value);
+          token = sessionData.access_token || undefined;
         } catch {
           // Cookie parse failed
         }
@@ -176,14 +177,16 @@ export async function POST(request: NextRequest) {
     // Verify user still exists and is active
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select(`
+      .select(
+        `
         id,
         email,
         full_name,
         is_active,
         branch_id,
         role_id
-      `)
+      `
+      )
       .eq('id', userId)
       .single();
 
@@ -222,7 +225,7 @@ export async function POST(request: NextRequest) {
       .eq('role_id', profileData.role_id);
 
     const roleName = roleData?.name || 'employee';
-    const permissions = (permissionsData || []).map(p => p.permission_code);
+    const permissions = (permissionsData || []).map((p) => p.permission_code);
 
     // Determine expires_in (default 1 hour = 3600 seconds)
     const expiresIn = 3600;

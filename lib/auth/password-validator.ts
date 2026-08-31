@@ -1,6 +1,6 @@
 /**
  * Password Validation Utility
- * 
+ *
  * Validates password complexity requirements:
  * - Minimum 8 characters
  * - At least 1 uppercase letter (A-Z)
@@ -66,11 +66,14 @@ export function validatePassword(password: string, email?: string): PasswordVali
   };
 }
 
-export function getPasswordValidationErrors(password: string, email?: string): PasswordValidationErrors {
+export function getPasswordValidationErrors(
+  password: string,
+  email?: string
+): PasswordValidationErrors {
   const result = validatePassword(password, email);
   const errorMap: PasswordValidationErrors = {};
 
-  result.errors.forEach(error => {
+  result.errors.forEach((error) => {
     if (error.includes('8 characters')) {
       errorMap.length = error;
     } else if (error.includes('uppercase')) {

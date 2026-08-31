@@ -1,7 +1,7 @@
 /**
  * POST /api/users/:user_id/change-status
  * Change user account status (Active/Inactive)
- * 
+ *
  * Requirements: 13.2, 13.3, 13.5, 18.1
  */
 
@@ -42,10 +42,7 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get current user's role for permission checking
@@ -73,22 +70,15 @@ export async function POST(
       .single();
 
     if (!targetUser) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Check permissions: admin or manager of user's branch
     const canUpdate =
-      isAdmin ||
-      (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
+      isAdmin || (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
 
     if (!canUpdate) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     // Parse status
@@ -176,9 +166,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('POST /api/users/:user_id/change-status error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

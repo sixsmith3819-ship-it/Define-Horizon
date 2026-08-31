@@ -1,6 +1,10 @@
 // lib/utils/announcements.ts - Announcement utility functions
 
-import { Announcement, AnnouncementPriority, AnnouncementStatus } from '@/lib/validations/announcement';
+import {
+  Announcement,
+  AnnouncementPriority,
+  AnnouncementStatus,
+} from '@/lib/validations/announcement';
 
 /**
  * Get color class for announcement priority badge
@@ -169,10 +173,10 @@ export function getVisibilityLabel(visibilityType: string): string {
 export function calculateAnnouncementStats(announcements: Announcement[]) {
   return {
     total: announcements.length,
-    published: announcements.filter(a => a.status === 'published').length,
-    draft: announcements.filter(a => a.status === 'draft').length,
-    archived: announcements.filter(a => a.status === 'archived').length,
-    urgent: announcements.filter(a => a.priority === 'urgent').length,
+    published: announcements.filter((a) => a.status === 'published').length,
+    draft: announcements.filter((a) => a.status === 'draft').length,
+    archived: announcements.filter((a) => a.status === 'archived').length,
+    urgent: announcements.filter((a) => a.priority === 'urgent').length,
     totalViews: announcements.reduce((sum, a) => sum + a.view_count, 0),
   };
 }

@@ -4,7 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createProductSchema, productFiltersSchema } from '@/lib/validations/product';
-import { calculateProfitMargin, calculateStockValue, getStockStatus } from '@/lib/utils/stock-calculations';
+import {
+  calculateProfitMargin,
+  calculateStockValue,
+  getStockStatus,
+} from '@/lib/utils/stock-calculations';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -91,10 +95,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
 
@@ -116,10 +117,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingSku) {
-      return NextResponse.json(
-        { error: 'SKU already exists' },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: 'SKU already exists' }, { status: 409 });
     }
 
     // Create product
@@ -177,9 +175,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to create product' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
   }
 }

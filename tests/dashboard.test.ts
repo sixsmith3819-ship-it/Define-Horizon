@@ -60,7 +60,9 @@ describe('Dashboard', () => {
       }
 
       // Local + International should equal or be less than total
-      expect(data.localTransactions + data.internationalTransactions <= data.totalTransactions).toBe(true);
+      expect(
+        data.localTransactions + data.internationalTransactions <= data.totalTransactions
+      ).toBe(true);
     });
 
     it('should respond within acceptable time', async () => {

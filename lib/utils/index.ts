@@ -1,12 +1,12 @@
 /**
  * Utility Functions
- * 
+ *
  * This directory contains general-purpose utility functions:
  * - String manipulation
  * - Date formatting
  * - Type helpers
  * - Formatting utilities (currency, phone, etc.)
- * 
+ *
  * Usage: import { formatCurrency, formatPhoneNumber } from '@/lib/utils'
  */
 

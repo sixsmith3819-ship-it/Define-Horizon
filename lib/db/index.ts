@@ -1,11 +1,11 @@
 /**
  * Database Access Layer
- * 
+ *
  * This directory contains:
  * - Database query functions
  * - ORM utilities
  * - Data access patterns
- * 
+ *
  * Usage: import { getCustomer, createTransaction } from '@/lib/db'
  */
 

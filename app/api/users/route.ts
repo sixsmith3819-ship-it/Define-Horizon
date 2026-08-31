@@ -3,13 +3,17 @@
  * List users with pagination and filters
  * POST /api/users
  * Create new user
- * 
+ *
  * Requirements: 12.1, 12.2, 12.3, 12.4, 15.2, 15.6, 18.1
  */
 
 import { createAdminClient, createServerComponentClient } from '@/lib/auth/supabase';
 import { CreateUserRequestSchema, UserListResponseSchema } from '@/lib/schemas/users';
-import { normalizePaginationParams, validateSortParams, calculatePagination } from '@/lib/utils/pagination';
+import {
+  normalizePaginationParams,
+  validateSortParams,
+  calculatePagination,
+} from '@/lib/utils/pagination';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -29,7 +33,11 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get('sort_order');
 
     // Normalize pagination parameters
-    const { page: normalizedPage, pageSize: normalizedPageSize, offset } = normalizePaginationParams(page || "1", pageSize || "10");
+    const {
+      page: normalizedPage,
+      pageSize: normalizedPageSize,
+      offset,
+    } = normalizePaginationParams(page || '1', pageSize || '10');
 
     // Validate sort parameters
     const { sortBy: validSortBy, sortOrder: validSortOrder } = validateSortParams(
@@ -47,10 +55,7 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get current user's profile and role for permission checking
@@ -78,9 +83,8 @@ export async function GET(request: NextRequest) {
     const canViewAllUsers = userRole === 'super_admin' || userRole === 'admin';
 
     // Build base query
-    let query = supabase
-      .from('profiles')
-      .select(`
+    let query = supabase.from('profiles').select(
+      `
         id,
         email,
         full_name,
@@ -92,7 +96,9 @@ export async function GET(request: NextRequest) {
         last_login_timestamp,
         roles!inner (name),
         branches!inner (name)
-      `, { count: 'exact' });
+      `,
+      { count: 'exact' }
+    );
 
     // Apply branch context: non-admins see only their branch users
     if (!canViewAllUsers) {
@@ -127,14 +133,11 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching users:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch users' },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: 'Failed to fetch users' }, { status: 500 });
     }
 
     // Transform response
-    const formattedUsers = (users || []).map(user => ({
+    const formattedUsers = (users || []).map((user) => ({
       user_id: user.id,
       email: user.email,
       full_name: user.full_name,
@@ -147,11 +150,7 @@ export async function GET(request: NextRequest) {
       version_number: 1, // Placeholder - would be from actual version field
     }));
 
-    const pagination = calculatePagination(
-      normalizedPage,
-      normalizedPageSize,
-      count || 0
-    );
+    const pagination = calculatePagination(normalizedPage, normalizedPageSize, count || 0);
 
     // Log this action to audit log
     await supabase.from('audit_log').insert({
@@ -171,10 +170,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('GET /api/users error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -199,8 +195,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, full_name, phone_number, role_id, branch_id, department_id } =
-      validation.data;
+    const { email, full_name, phone_number, role_id, branch_id, department_id } = validation.data;
 
     const supabase = createServerComponentClient();
 
@@ -211,10 +206,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if current user is Super Administrator
@@ -259,10 +251,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!roleExists) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid role ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid role ID' }, { status: 400 });
     }
 
     const { data: branchExists } = await supabase
@@ -272,10 +261,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!branchExists) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid branch ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid branch ID' }, { status: 400 });
     }
 
     // Use admin client for user creation
@@ -305,19 +291,17 @@ export async function POST(request: NextRequest) {
     const newUserId = authData.user.id;
 
     // Create profile entry
-    const { error: profileError } = await adminSupabase
-      .from('profiles')
-      .insert({
-        id: newUserId,
-        email,
-        full_name,
-        phone_number: phone_number || null,
-        role_id,
-        branch_id,
-        department_id: department_id || null,
-        is_active: false, // Inactive until user sets password
-        version_number: 1,
-      });
+    const { error: profileError } = await adminSupabase.from('profiles').insert({
+      id: newUserId,
+      email,
+      full_name,
+      phone_number: phone_number || null,
+      role_id,
+      branch_id,
+      department_id: department_id || null,
+      is_active: false, // Inactive until user sets password
+      version_number: 1,
+    });
 
     if (profileError) {
       console.error('Profile creation error:', profileError);
@@ -334,15 +318,13 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days
 
     // Create user invitation record
-    const { error: invitationError } = await adminSupabase
-      .from('user_invitations')
-      .insert({
-        email,
-        invited_by: currentUser.id,
-        token: invitationToken,
-        expires_at: expiresAt,
-        status: 'pending',
-      });
+    const { error: invitationError } = await adminSupabase.from('user_invitations').insert({
+      email,
+      invited_by: currentUser.id,
+      token: invitationToken,
+      expires_at: expiresAt,
+      status: 'pending',
+    });
 
     if (invitationError) {
       console.error('Invitation creation error:', invitationError);
@@ -401,10 +383,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('POST /api/users error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -440,7 +419,9 @@ function generateTemporaryPassword(): string {
  * Generate secure invitation token
  */
 function generateInvitationToken(): string {
-  return Math.random().toString(36).substring(2, 15) +
+  return (
     Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
 }

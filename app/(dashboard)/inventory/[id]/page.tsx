@@ -171,20 +171,20 @@ export default function ProductDetailPage() {
 
   if (isLoadingProduct) {
     return (
-      <div className='space-y-6'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
-        <p className='text-gray-600'>Loading product...</p>
+      <div className="space-y-6">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="text-gray-600">Loading product...</p>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className='space-y-6'>
-        <div className='bg-red-50 border border-red-200 rounded-lg p-4 text-red-700'>
+      <div className="space-y-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
           Product not found
         </div>
-        <Link href='/dashboard/inventory' className='text-blue-600 hover:underline'>
+        <Link href="/dashboard/inventory" className="text-blue-600 hover:underline">
           ← Back to Inventory
         </Link>
       </div>
@@ -192,12 +192,12 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       {/* Header */}
-      <div className='flex justify-between items-start'>
+      <div className="flex justify-between items-start">
         <div>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-3xl font-bold text-gray-900'>{product.name}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
             {product.stock_status && (
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${getStatusBadgeColor(
@@ -208,18 +208,20 @@ export default function ProductDetailPage() {
               </span>
             )}
           </div>
-          <p className='text-gray-600 mt-1'>SKU: <strong>{product.sku}</strong></p>
+          <p className="text-gray-600 mt-1">
+            SKU: <strong>{product.sku}</strong>
+          </p>
         </div>
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <button
             onClick={() => setIsEditMode(!isEditMode)}
-            className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition'
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             {isEditMode ? 'Cancel' : 'Edit'}
           </button>
           <button
             onClick={handleDelete}
-            className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition'
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
           >
             Delete
           </button>
@@ -228,58 +230,64 @@ export default function ProductDetailPage() {
 
       {/* Low Stock Warning */}
       {product.stock_status === 'low_stock' && (
-        <div className='p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg'>
-          <h3 className='text-sm font-semibold text-yellow-800'>⚠️ Low Stock Warning</h3>
-          <p className='text-sm text-yellow-700 mt-1'>
-            Current stock ({product.quantity}) is below reorder level ({product.reorder_level}). Consider placing an order.
+        <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+          <h3 className="text-sm font-semibold text-yellow-800">⚠️ Low Stock Warning</h3>
+          <p className="text-sm text-yellow-700 mt-1">
+            Current stock ({product.quantity}) is below reorder level ({product.reorder_level}).
+            Consider placing an order.
           </p>
         </div>
       )}
 
       {/* Out of Stock Alert */}
       {product.stock_status === 'out_of_stock' && (
-        <div className='p-4 bg-red-50 border-l-4 border-red-400 rounded-lg'>
-          <h3 className='text-sm font-semibold text-red-800'>🔴 Out of Stock</h3>
-          <p className='text-sm text-red-700 mt-1'>
+        <div className="p-4 bg-red-50 border-l-4 border-red-400 rounded-lg">
+          <h3 className="text-sm font-semibold text-red-800">🔴 Out of Stock</h3>
+          <p className="text-sm text-red-700 mt-1">
             This product is currently out of stock. Please add inventory to continue sales.
           </p>
         </div>
       )}
 
       {/* Product Overview Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-        <div className='bg-white rounded-lg shadow p-4'>
-          <p className='text-gray-600 text-sm font-medium'>Current Stock</p>
-          <p className='mt-2 text-2xl font-bold text-gray-900'>{product.quantity}</p>
-          <p className='text-xs text-gray-500 mt-1'>Reorder Level: {product.reorder_level}</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-gray-600 text-sm font-medium">Current Stock</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">{product.quantity}</p>
+          <p className="text-xs text-gray-500 mt-1">Reorder Level: {product.reorder_level}</p>
         </div>
 
-        <div className='bg-white rounded-lg shadow p-4'>
-          <p className='text-gray-600 text-sm font-medium'>Buying Price</p>
-          <p className='mt-2 text-2xl font-bold text-gray-900'>{formatCurrency(product.buying_price)}</p>
-          <p className='text-xs text-gray-500 mt-1'>Per Unit</p>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-gray-600 text-sm font-medium">Buying Price</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {formatCurrency(product.buying_price)}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Per Unit</p>
         </div>
 
-        <div className='bg-white rounded-lg shadow p-4'>
-          <p className='text-gray-600 text-sm font-medium'>Selling Price</p>
-          <p className='mt-2 text-2xl font-bold text-gray-900'>{formatCurrency(product.selling_price)}</p>
-          <p className='text-xs text-gray-500 mt-1'>Per Unit</p>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-gray-600 text-sm font-medium">Selling Price</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
+            {formatCurrency(product.selling_price)}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Per Unit</p>
         </div>
 
-        <div className='bg-white rounded-lg shadow p-4'>
-          <p className='text-gray-600 text-sm font-medium'>Stock Value</p>
-          <p className='mt-2 text-2xl font-bold text-gray-900'>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-gray-600 text-sm font-medium">Stock Value</p>
+          <p className="mt-2 text-2xl font-bold text-gray-900">
             {product.stock_value !== undefined ? formatCurrency(product.stock_value) : '-'}
           </p>
-          <p className='text-xs text-gray-500 mt-1'>
-            Profit Margin: {product.profit_margin !== undefined ? formatPercentage(product.profit_margin) : '-'}
+          <p className="text-xs text-gray-500 mt-1">
+            Profit Margin:{' '}
+            {product.profit_margin !== undefined ? formatPercentage(product.profit_margin) : '-'}
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className='border-b border-gray-200'>
-        <div className='flex gap-8'>
+      <div className="border-b border-gray-200">
+        <div className="flex gap-8">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-3 font-medium border-b-2 transition ${
@@ -319,44 +327,44 @@ export default function ProductDetailPage() {
         {activeTab === 'overview' && (
           <div>
             {isEditMode ? (
-              <div className='bg-white rounded-lg shadow p-8'>
+              <div className="bg-white rounded-lg shadow p-8">
                 <ProductForm
                   onSubmit={handleProductUpdate}
                   isLoading={false}
                   defaultValues={product}
-                  mode='edit'
+                  mode="edit"
                 />
               </div>
             ) : (
-              <div className='bg-white rounded-lg shadow p-8 space-y-6'>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+              <div className="bg-white rounded-lg shadow p-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
-                    <h3 className='text-sm font-semibold text-gray-700 uppercase'>Category</h3>
-                    <p className='mt-2 text-lg text-gray-900'>{product.category}</p>
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase">Category</h3>
+                    <p className="mt-2 text-lg text-gray-900">{product.category}</p>
                   </div>
                   <div>
-                    <h3 className='text-sm font-semibold text-gray-700 uppercase'>Status</h3>
-                    <p className='mt-2 text-lg text-gray-900'>{product.status}</p>
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase">Status</h3>
+                    <p className="mt-2 text-lg text-gray-900">{product.status}</p>
                   </div>
                 </div>
 
                 {product.description && (
                   <div>
-                    <h3 className='text-sm font-semibold text-gray-700 uppercase'>Description</h3>
-                    <p className='mt-2 text-gray-900 whitespace-pre-wrap'>{product.description}</p>
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase">Description</h3>
+                    <p className="mt-2 text-gray-900 whitespace-pre-wrap">{product.description}</p>
                   </div>
                 )}
 
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200'>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
                   <div>
-                    <h3 className='text-sm font-semibold text-gray-700 uppercase'>Created</h3>
-                    <p className='mt-2 text-gray-900'>
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase">Created</h3>
+                    <p className="mt-2 text-gray-900">
                       {new Date(product.created_at).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <h3 className='text-sm font-semibold text-gray-700 uppercase'>Last Updated</h3>
-                    <p className='mt-2 text-gray-900'>
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase">Last Updated</h3>
+                    <p className="mt-2 text-gray-900">
                       {new Date(product.updated_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -368,23 +376,23 @@ export default function ProductDetailPage() {
 
         {/* Adjust Stock Tab */}
         {activeTab === 'adjust' && (
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            <div className='bg-white rounded-lg shadow p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>Add Stock</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Stock</h3>
               <StockAdjustmentForm
                 productId={productId}
                 currentQuantity={product.quantity}
-                adjustmentType='in'
+                adjustmentType="in"
                 onSubmit={handleStockAdjustment}
               />
             </div>
 
-            <div className='bg-white rounded-lg shadow p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>Remove Stock</h3>
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Remove Stock</h3>
               <StockAdjustmentForm
                 productId={productId}
                 currentQuantity={product.quantity}
-                adjustmentType='out'
+                adjustmentType="out"
                 onSubmit={handleStockAdjustment}
               />
             </div>

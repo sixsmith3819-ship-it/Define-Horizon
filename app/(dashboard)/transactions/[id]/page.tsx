@@ -182,7 +182,9 @@ export default function TransactionDetailPage({ params }: PageProps) {
                 {transaction.customer?.phone_number && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Phone:</span>
-                    <span className="font-medium text-gray-900">{transaction.customer.phone_number}</span>
+                    <span className="font-medium text-gray-900">
+                      {transaction.customer.phone_number}
+                    </span>
                   </div>
                 )}
               </div>
@@ -223,13 +225,19 @@ export default function TransactionDetailPage({ params }: PageProps) {
                   <span className="font-medium text-gray-900">{transaction.amount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Service Charge ({transaction.transaction_type === 'domestic' ? '8%' : '10%'}):</span>
-                  <span className="font-medium text-blue-600">+{transaction.service_charge.toFixed(2)}</span>
+                  <span className="text-gray-600">
+                    Service Charge ({transaction.transaction_type === 'domestic' ? '8%' : '10%'}):
+                  </span>
+                  <span className="font-medium text-blue-600">
+                    +{transaction.service_charge.toFixed(2)}
+                  </span>
                 </div>
                 <div className="border-t border-blue-200 my-2" />
                 <div className="flex justify-between">
                   <span className="font-semibold text-gray-900">Total Amount:</span>
-                  <span className="text-lg font-bold text-blue-600">{transaction.total_amount.toFixed(2)}</span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {transaction.total_amount.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -256,7 +264,10 @@ export default function TransactionDetailPage({ params }: PageProps) {
             )}
 
             <div>
-              <label htmlFor="status-select" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="status-select"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 New Status
               </label>
               <select
@@ -299,7 +310,8 @@ export default function TransactionDetailPage({ params }: PageProps) {
 
             <div className="border-t pt-4">
               <p className="text-xs text-gray-500">
-                <strong>Note:</strong> Status transitions follow a one-way path: pending → completed or failed.
+                <strong>Note:</strong> Status transitions follow a one-way path: pending → completed
+                or failed.
               </p>
             </div>
           </div>

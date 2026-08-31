@@ -1,6 +1,6 @@
 /**
  * User Management Zod Schemas
- * 
+ *
  * Validation schemas for user CRUD operations and related endpoints
  */
 
@@ -28,14 +28,8 @@ export const CreateUserRequestSchema = z.object({
     .regex(/^\+?[0-9\s\-\(\)]{10,20}$/, 'Invalid phone number format')
     .optional()
     .describe('User phone number'),
-  role_id: z
-    .string()
-    .uuid('Invalid role ID format')
-    .describe('Role ID to assign to user'),
-  branch_id: z
-    .string()
-    .uuid('Invalid branch ID format')
-    .describe('Branch ID to assign to user'),
+  role_id: z.string().uuid('Invalid role ID format').describe('Role ID to assign to user'),
+  branch_id: z.string().uuid('Invalid branch ID format').describe('Branch ID to assign to user'),
   department_id: z
     .string()
     .uuid('Invalid department ID format')
@@ -138,17 +132,25 @@ export const UserDetailsResponseSchema = z.object({
     status: z.string().describe('User status'),
     created_at: z.string().datetime().describe('Account creation timestamp'),
     last_login_timestamp: z.string().datetime().nullable().describe('Last login timestamp'),
-    login_history: z.array(z.object({
-      login_timestamp: z.string().datetime().describe('Login time'),
-      ip_address: z.string().describe('IP address'),
-      device_type: z.string().describe('Device type (desktop/mobile/tablet)'),
-      duration_seconds: z.number().int().describe('Session duration in seconds'),
-    })).describe('Recent login history (last 5)'),
-    audit_log: z.array(z.object({
-      timestamp: z.string().datetime().describe('Action timestamp'),
-      action_type: z.string().describe('Type of action'),
-      description: z.string().describe('Action description'),
-    })).describe('Recent audit log (last 10)'),
+    login_history: z
+      .array(
+        z.object({
+          login_timestamp: z.string().datetime().describe('Login time'),
+          ip_address: z.string().describe('IP address'),
+          device_type: z.string().describe('Device type (desktop/mobile/tablet)'),
+          duration_seconds: z.number().int().describe('Session duration in seconds'),
+        })
+      )
+      .describe('Recent login history (last 5)'),
+    audit_log: z
+      .array(
+        z.object({
+          timestamp: z.string().datetime().describe('Action timestamp'),
+          action_type: z.string().describe('Type of action'),
+          description: z.string().describe('Action description'),
+        })
+      )
+      .describe('Recent audit log (last 10)'),
   }),
 });
 
@@ -159,14 +161,8 @@ export type UserDetailsResponse = z.infer<typeof UserDetailsResponseSchema>;
  */
 export const ChangeStatusRequestSchema = z.object({
   status: z.enum(['Active', 'Inactive']).describe('New user status'),
-  suspension_reason: z
-    .string()
-    .optional()
-    .describe('Reason for suspension if applicable'),
-  suspension_notes: z
-    .string()
-    .optional()
-    .describe('Additional notes about suspension'),
+  suspension_reason: z.string().optional().describe('Reason for suspension if applicable'),
+  suspension_notes: z.string().optional().describe('Additional notes about suspension'),
 });
 
 export type ChangeStatusRequest = z.infer<typeof ChangeStatusRequestSchema>;
@@ -188,10 +184,7 @@ export type ChangeStatusResponse = z.infer<typeof ChangeStatusResponseSchema>;
  * Password Reset Request Schema (Admin)
  */
 export const ResetPasswordRequestSchema = z.object({
-  confirmation: z
-    .boolean()
-    .optional()
-    .describe('Confirmation flag for password reset'),
+  confirmation: z.boolean().optional().describe('Confirmation flag for password reset'),
 });
 
 export type ResetPasswordRequest = z.infer<typeof ResetPasswordRequestSchema>;
@@ -210,10 +203,7 @@ export type ResetPasswordResponse = z.infer<typeof ResetPasswordResponseSchema>;
  * Force Password Change Request Schema
  */
 export const ForcePasswordChangeRequestSchema = z.object({
-  confirmation: z
-    .boolean()
-    .optional()
-    .describe('Confirmation flag'),
+  confirmation: z.boolean().optional().describe('Confirmation flag'),
 });
 
 export type ForcePasswordChangeRequest = z.infer<typeof ForcePasswordChangeRequestSchema>;
@@ -232,10 +222,7 @@ export type ForcePasswordChangeResponse = z.infer<typeof ForcePasswordChangeResp
  * Delete User Request Schema
  */
 export const DeleteUserRequestSchema = z.object({
-  confirm_email: z
-    .string()
-    .email('Invalid email format')
-    .describe('User email for confirmation'),
+  confirm_email: z.string().email('Invalid email format').describe('User email for confirmation'),
 });
 
 export type DeleteUserRequest = z.infer<typeof DeleteUserRequestSchema>;
@@ -296,18 +283,12 @@ export const BulkActionsRequestSchema = z.object({
     .uuid('Invalid branch ID format')
     .optional()
     .describe('Branch ID for assign_branch action'),
-  status: z
-    .enum(['Active', 'Inactive'])
-    .optional()
-    .describe('Status for change_status action'),
+  status: z.enum(['Active', 'Inactive']).optional().describe('Status for change_status action'),
   suspension_reason: z
     .string()
     .optional()
     .describe('Reason for suspension if changing to Inactive'),
-  format: z
-    .enum(['csv', 'excel', 'pdf'])
-    .optional()
-    .describe('Export format for export action'),
+  format: z.enum(['csv', 'excel', 'pdf']).optional().describe('Export format for export action'),
 });
 
 export type BulkActionsRequest = z.infer<typeof BulkActionsRequestSchema>;
@@ -322,10 +303,15 @@ export const BulkActionsResponseSchema = z.object({
     total_users: z.number().int().describe('Total users in request'),
     successful_count: z.number().int().describe('Number of users successfully updated'),
     failed_count: z.number().int().describe('Number of users that failed'),
-    failed_users: z.array(z.object({
-      user_id: z.string().describe('User ID'),
-      error: z.string().describe('Error message'),
-    })).optional().describe('Details of failed users'),
+    failed_users: z
+      .array(
+        z.object({
+          user_id: z.string().describe('User ID'),
+          error: z.string().describe('Error message'),
+        })
+      )
+      .optional()
+      .describe('Details of failed users'),
     export_url: z.string().optional().describe('Download URL for export action'),
   }),
 });
@@ -336,30 +322,15 @@ export type BulkActionsResponse = z.infer<typeof BulkActionsResponseSchema>;
  * Export Users Request Schema
  */
 export const ExportUsersRequestSchema = z.object({
-  format: z
-    .enum(['csv', 'excel', 'pdf'])
-    .default('csv')
-    .describe('Export file format'),
+  format: z.enum(['csv', 'excel', 'pdf']).default('csv').describe('Export file format'),
   user_ids: z
     .array(z.string().uuid())
     .optional()
     .describe('Specific user IDs to export (if not provided, uses current filters)'),
-  search: z
-    .string()
-    .optional()
-    .describe('Search query applied to export'),
-  role: z
-    .string().uuid()
-    .optional()
-    .describe('Role filter applied to export'),
-  branch: z
-    .string().uuid()
-    .optional()
-    .describe('Branch filter applied to export'),
-  status: z
-    .string()
-    .optional()
-    .describe('Status filter applied to export'),
+  search: z.string().optional().describe('Search query applied to export'),
+  role: z.string().uuid().optional().describe('Role filter applied to export'),
+  branch: z.string().uuid().optional().describe('Branch filter applied to export'),
+  status: z.string().optional().describe('Status filter applied to export'),
 });
 
 export type ExportUsersRequest = z.infer<typeof ExportUsersRequestSchema>;
@@ -387,12 +358,16 @@ export const RoleResponseSchema = z.object({
   role_id: z.string().uuid().describe('Unique role identifier'),
   name: z.string().describe('Role name'),
   description: z.string().optional().describe('Role description'),
-  permissions: z.array(z.object({
-    permission_id: z.string().uuid().describe('Permission ID'),
-    permission_code: z.string().describe('Permission code'),
-    permission_name: z.string().describe('Permission name'),
-    category: z.string().describe('Permission category'),
-  })).describe('Permissions assigned to role'),
+  permissions: z
+    .array(
+      z.object({
+        permission_id: z.string().uuid().describe('Permission ID'),
+        permission_code: z.string().describe('Permission code'),
+        permission_name: z.string().describe('Permission name'),
+        category: z.string().describe('Permission category'),
+      })
+    )
+    .describe('Permissions assigned to role'),
 });
 
 export type RoleResponse = z.infer<typeof RoleResponseSchema>;

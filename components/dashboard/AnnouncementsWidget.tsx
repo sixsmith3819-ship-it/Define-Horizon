@@ -101,7 +101,7 @@ export default function AnnouncementsWidget() {
         </div>
       ) : (
         <div className="divide-y divide-gray-200">
-          {announcements.map(announcement => (
+          {announcements.map((announcement) => (
             <Link
               key={announcement.id}
               href={`/announcements/${announcement.id}`}
@@ -111,7 +111,9 @@ export default function AnnouncementsWidget() {
                 <div className="flex-1 min-w-0">
                   {/* Priority Badge + Title */}
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${getPriorityColor(announcement.priority)}`}>
+                    <span
+                      className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${getPriorityColor(announcement.priority)}`}
+                    >
                       {getPriorityIcon(announcement.priority)}
                     </span>
                     <h3 className="font-semibold text-gray-900 truncate group-hover:text-blue-600">

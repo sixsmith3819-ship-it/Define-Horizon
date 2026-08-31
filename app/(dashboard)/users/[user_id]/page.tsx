@@ -105,38 +105,38 @@ export default function UserDetailPage() {
 
   if (!user) {
     return (
-      <div className='space-y-6'>
-        <Link href='/users' className='text-blue-600 hover:text-blue-700 font-medium'>
+      <div className="space-y-6">
+        <Link href="/users" className="text-blue-600 hover:text-blue-700 font-medium">
           ← Back to Users
         </Link>
-        <ErrorAlert message='User not found' onRetry={fetchUser} />
+        <ErrorAlert message="User not found" onRetry={fetchUser} />
       </div>
     );
   }
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
-      <Link href='/users' className='text-blue-600 hover:text-blue-700 font-medium'>
+      <Link href="/users" className="text-blue-600 hover:text-blue-700 font-medium">
         ← Back to Users
       </Link>
 
       {error && <ErrorAlert message={error} onRetry={fetchUser} />}
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Info */}
-        <div className='lg:col-span-2 space-y-6'>
-          <div className='bg-white rounded-lg shadow p-6 border border-gray-200'>
-            <div className='flex justify-between items-start mb-6'>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className='text-3xl font-bold text-gray-900'>{user.full_name || user.email}</h1>
-                <p className='text-gray-600 mt-1'>{user.email}</p>
+                <h1 className="text-3xl font-bold text-gray-900">{user.full_name || user.email}</h1>
+                <p className="text-gray-600 mt-1">{user.email}</p>
               </div>
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Edit
                 </button>
@@ -144,18 +144,16 @@ export default function UserDetailPage() {
             </div>
 
             {!isEditing ? (
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 <div>
-                  <p className='text-sm font-medium text-gray-500'>Phone</p>
-                  <p className='text-gray-900'>{user.phone_number || '-'}</p>
+                  <p className="text-sm font-medium text-gray-500">Phone</p>
+                  <p className="text-gray-900">{user.phone_number || '-'}</p>
                 </div>
                 <div>
-                  <p className='text-sm font-medium text-gray-500'>Status</p>
+                  <p className="text-sm font-medium text-gray-500">Status</p>
                   <span
                     className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                      user.is_active
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                      user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}
                   >
                     {user.is_active ? '🟢 Active' : '🔴 Inactive'}
@@ -163,52 +161,50 @@ export default function UserDetailPage() {
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleUpdate} className='space-y-4'>
+              <form onSubmit={handleUpdate} className="space-y-4">
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
-                    Full Name
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input
-                    type='text'
+                    type="text"
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number
                   </label>
                   <input
-                    type='tel'
+                    type="tel"
                     value={formData.phone_number}
                     onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className='flex items-center space-x-3'>
+                  <label className="flex items-center space-x-3">
                     <input
-                      type='checkbox'
+                      type="checkbox"
                       checked={formData.is_active}
                       onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                      className='w-4 h-4 border border-gray-300 rounded'
+                      className="w-4 h-4 border border-gray-300 rounded"
                     />
-                    <span className='text-sm font-medium text-gray-700'>Active</span>
+                    <span className="text-sm font-medium text-gray-700">Active</span>
                   </label>
                 </div>
 
-                <div className='flex space-x-3'>
+                <div className="flex space-x-3">
                   <button
-                    type='submit'
-                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Save Changes
                   </button>
                   <button
-                    type='button'
+                    type="button"
                     onClick={() => {
                       setIsEditing(false);
                       setFormData({
@@ -217,7 +213,7 @@ export default function UserDetailPage() {
                         is_active: user.is_active,
                       });
                     }}
-                    className='px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors'
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -228,29 +224,29 @@ export default function UserDetailPage() {
         </div>
 
         {/* Sidebar Info */}
-        <div className='space-y-6'>
-          <div className='bg-white rounded-lg shadow p-6 border border-gray-200'>
-            <h2 className='text-lg font-semibold text-gray-900 mb-4'>Account Details</h2>
-            <div className='space-y-4'>
+        <div className="space-y-6">
+          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Details</h2>
+            <div className="space-y-4">
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Role</p>
-                <p className='text-sm text-gray-900 capitalize font-medium mt-1'>
+                <p className="text-xs font-medium text-gray-500 uppercase">Role</p>
+                <p className="text-sm text-gray-900 capitalize font-medium mt-1">
                   {user.role.replace('_', ' ')}
                 </p>
               </div>
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Branch</p>
-                <p className='text-sm text-gray-900 font-medium mt-1'>{user.branch_name || '-'}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase">Branch</p>
+                <p className="text-sm text-gray-900 font-medium mt-1">{user.branch_name || '-'}</p>
               </div>
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Joined</p>
-                <p className='text-sm text-gray-900 font-medium mt-1'>
+                <p className="text-xs font-medium text-gray-500 uppercase">Joined</p>
+                <p className="text-sm text-gray-900 font-medium mt-1">
                   {new Date(user.created_at).toLocaleDateString()}
                 </p>
               </div>
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Last Login</p>
-                <p className='text-sm text-gray-900 font-medium mt-1'>
+                <p className="text-xs font-medium text-gray-500 uppercase">Last Login</p>
+                <p className="text-sm text-gray-900 font-medium mt-1">
                   {user.last_login_timestamp
                     ? new Date(user.last_login_timestamp).toLocaleDateString()
                     : 'Never'}
@@ -259,9 +255,9 @@ export default function UserDetailPage() {
             </div>
           </div>
 
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-            <p className='text-xs text-blue-600 font-medium uppercase'>User ID</p>
-            <p className='text-sm text-blue-900 font-mono mt-1 break-all'>{user.id}</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-xs text-blue-600 font-medium uppercase">User ID</p>
+            <p className="text-sm text-blue-900 font-mono mt-1 break-all">{user.id}</p>
           </div>
         </div>
       </div>

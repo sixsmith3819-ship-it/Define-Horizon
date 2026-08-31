@@ -38,9 +38,7 @@ export function getStockStatus(
 /**
  * Get status badge color
  */
-export function getStatusBadgeColor(
-  status: 'in_stock' | 'low_stock' | 'out_of_stock'
-): string {
+export function getStatusBadgeColor(status: 'in_stock' | 'low_stock' | 'out_of_stock'): string {
   const colors = {
     in_stock: 'bg-green-100 text-green-800 border-green-300',
     low_stock: 'bg-yellow-100 text-yellow-800 border-yellow-300',
@@ -52,9 +50,7 @@ export function getStatusBadgeColor(
 /**
  * Get status label
  */
-export function getStatusLabel(
-  status: 'in_stock' | 'low_stock' | 'out_of_stock'
-): string {
+export function getStatusLabel(status: 'in_stock' | 'low_stock' | 'out_of_stock'): string {
   const labels = {
     in_stock: 'In Stock',
     low_stock: 'Low Stock',

@@ -21,11 +21,7 @@ interface UserManagementLayoutProps {
  * Responsive User Management Layout
  * Handles desktop (full sidebar), tablet (collapsible), and mobile (hamburger menu)
  */
-export function UserManagementLayout({
-  children,
-  title,
-  breadcrumbs,
-}: UserManagementLayoutProps) {
+export function UserManagementLayout({ children, title, breadcrumbs }: UserManagementLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const router = useRouter();
@@ -82,7 +78,7 @@ export function UserManagementLayout({
 
         {/* Navigation */}
         <nav className="mt-6">
-          {navigationItems.map(item => (
+          {navigationItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -111,9 +107,7 @@ export function UserManagementLayout({
 
           {/* Title */}
           {title && (
-            <h1 className="hidden md:block text-xl font-semibold text-slate-900">
-              {title}
-            </h1>
+            <h1 className="hidden md:block text-xl font-semibold text-slate-900">{title}</h1>
           )}
 
           {/* User menu */}
@@ -125,9 +119,7 @@ export function UserManagementLayout({
               aria-expanded={userMenuOpen}
             >
               <User size={20} className="text-slate-600" />
-              <span className="text-sm font-medium text-slate-700 hidden sm:inline">
-                Account
-              </span>
+              <span className="text-sm font-medium text-slate-700 hidden sm:inline">Account</span>
             </button>
 
             {/* User menu dropdown */}

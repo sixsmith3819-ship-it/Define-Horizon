@@ -55,8 +55,7 @@ export default function TransactionsPage() {
           (tx: TransactionWithCustomer) =>
             `${tx.customer?.first_name} ${tx.customer?.last_name}`
               .toLowerCase()
-              .includes(searchLower) ||
-            tx.customer?.email?.toLowerCase().includes(searchLower)
+              .includes(searchLower) || tx.customer?.email?.toLowerCase().includes(searchLower)
         );
       }
 
@@ -75,9 +74,7 @@ export default function TransactionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
-          <p className="mt-2 text-gray-600">
-            Manage and track all financial transactions
-          </p>
+          <p className="mt-2 text-gray-600">Manage and track all financial transactions</p>
         </div>
         <Link
           href="/transactions/new"
@@ -147,7 +144,10 @@ export default function TransactionsPage() {
 
           {/* Customer Search */}
           <div>
-            <label htmlFor="customer-search" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="customer-search"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Search Customer
             </label>
             <input

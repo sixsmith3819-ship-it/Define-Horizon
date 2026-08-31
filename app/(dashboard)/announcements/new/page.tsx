@@ -139,7 +139,9 @@ export default function NewAnnouncementPage() {
               />
               <div className="mt-2 flex justify-between items-center">
                 <p className="text-xs text-gray-500">Min 5 characters, Max 255 characters</p>
-                <p className={`text-xs ${formData.title.length >= 5 ? 'text-green-600' : 'text-red-600'}`}>
+                <p
+                  className={`text-xs ${formData.title.length >= 5 ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {formData.title.length}/255
                 </p>
               </div>
@@ -168,16 +170,18 @@ export default function NewAnnouncementPage() {
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-colors ${
-                      charPercentage > 90 ? 'bg-red-600' : charPercentage > 70 ? 'bg-orange-600' : 'bg-green-600'
+                      charPercentage > 90
+                        ? 'bg-red-600'
+                        : charPercentage > 70
+                          ? 'bg-orange-600'
+                          : 'bg-green-600'
                     }`}
                     style={{ width: `${Math.min(charPercentage, 100)}%` }}
                   />
                 </div>
                 <div className="flex justify-between items-center">
                   <p className="text-xs text-gray-500">Min 20 characters, Max 5000 characters</p>
-                  <p
-                    className={`text-xs ${charCount >= 20 ? 'text-green-600' : 'text-red-600'}`}
-                  >
+                  <p className={`text-xs ${charCount >= 20 ? 'text-green-600' : 'text-red-600'}`}>
                     {charCount}/{charLimit}
                   </p>
                 </div>
@@ -193,7 +197,7 @@ export default function NewAnnouncementPage() {
                   Priority <span className="text-red-600">*</span>
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {['low', 'normal', 'high', 'urgent'].map(p => (
+                  {['low', 'normal', 'high', 'urgent'].map((p) => (
                     <button
                       key={p}
                       type="button"
@@ -225,17 +229,27 @@ export default function NewAnnouncementPage() {
                 <div className="space-y-2">
                   {[
                     { value: 'company_wide', label: 'Company-Wide', desc: 'All users see this' },
-                    { value: 'branch_specific', label: 'Branch-Specific', desc: 'Only selected branches' },
+                    {
+                      value: 'branch_specific',
+                      label: 'Branch-Specific',
+                      desc: 'Only selected branches',
+                    },
                     { value: 'role_specific', label: 'Role-Specific', desc: 'Only selected roles' },
-                  ].map(opt => (
-                    <label key={opt.value} className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                  ].map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                    >
                       <input
                         type="radio"
                         name="visibility"
                         value={opt.value}
                         checked={formData.visibility_type === opt.value}
                         onChange={(e) =>
-                          setFormData({ ...formData, visibility_type: e.target.value as VisibilityType })
+                          setFormData({
+                            ...formData,
+                            visibility_type: e.target.value as VisibilityType,
+                          })
                         }
                         className="mr-3"
                       />
@@ -246,7 +260,9 @@ export default function NewAnnouncementPage() {
                     </label>
                   ))}
                 </div>
-                {errors.visibility_type && <p className="mt-2 text-sm text-red-600">{errors.visibility_type}</p>}
+                {errors.visibility_type && (
+                  <p className="mt-2 text-sm text-red-600">{errors.visibility_type}</p>
+                )}
               </div>
 
               {/* Expiry Date */}
@@ -353,10 +369,10 @@ export default function NewAnnouncementPage() {
                               formData.priority === 'urgent'
                                 ? 'bg-red-100 text-red-800'
                                 : formData.priority === 'high'
-                                ? 'bg-orange-100 text-orange-800'
-                                : formData.priority === 'normal'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'
+                                  ? 'bg-orange-100 text-orange-800'
+                                  : formData.priority === 'normal'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-gray-100 text-gray-800'
                             }`}
                           >
                             {formData.priority}
@@ -368,9 +384,7 @@ export default function NewAnnouncementPage() {
                         <p className="text-xs text-gray-600 line-clamp-2 mb-2">
                           {formData.content || 'Your content preview...'}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date().toLocaleDateString()}
-                        </p>
+                        <p className="text-xs text-gray-500">{new Date().toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
@@ -388,8 +402,12 @@ export default function NewAnnouncementPage() {
               <div className="border-t border-gray-200 pt-4 text-xs text-gray-600 space-y-2">
                 <p className="font-semibold text-gray-900">Publishing Options:</p>
                 <ul className="space-y-1">
-                  <li>• <span className="font-medium">Save as Draft:</span> Not visible to users yet</li>
-                  <li>• <span className="font-medium">Publish:</span> Visible to all immediately</li>
+                  <li>
+                    • <span className="font-medium">Save as Draft:</span> Not visible to users yet
+                  </li>
+                  <li>
+                    • <span className="font-medium">Publish:</span> Visible to all immediately
+                  </li>
                   <li className="pt-2">Status can be changed later by editing</li>
                 </ul>
               </div>

@@ -153,12 +153,12 @@ export default function EditCustomerPage() {
 
   if (loading) {
     return (
-      <div className='space-y-6'>
+      <div className="space-y-6">
         <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Edit Customer</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Edit Customer</h1>
         </div>
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='text-center text-gray-600'>Loading customer...</div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-center text-gray-600">Loading customer...</div>
         </div>
       </div>
     );
@@ -166,15 +166,15 @@ export default function EditCustomerPage() {
 
   if (!customer) {
     return (
-      <div className='space-y-6'>
+      <div className="space-y-6">
         <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Customer Not Found</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Customer Not Found</h1>
         </div>
-        <div className='bg-white rounded-lg shadow p-6'>
-          <p className='text-gray-600 mb-4'>The customer you're looking for doesn't exist.</p>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 mb-4">The customer you're looking for doesn't exist.</p>
           <Link
-            href='/customers'
-            className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700'
+            href="/customers"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Back to Customers
           </Link>
@@ -184,152 +184,148 @@ export default function EditCustomerPage() {
   }
 
   return (
-    <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Edit Customer</h1>
-          <p className='text-gray-600 mt-1'>
+          <h1 className="text-3xl font-bold text-gray-900">Edit Customer</h1>
+          <p className="text-gray-600 mt-1">
             {customer.first_name} {customer.last_name}
           </p>
         </div>
-        <Link
-          href='/customers'
-          className='text-gray-600 hover:text-gray-900'
-        >
+        <Link href="/customers" className="text-gray-600 hover:text-gray-900">
           ← Back to Customers
         </Link>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
-        <div className='lg:col-span-2'>
-          <div className='bg-white rounded-lg shadow p-6'>
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-lg shadow p-6">
             {error && (
-              <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700'>
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className='space-y-6'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* First Name */}
                 <div>
-                  <label htmlFor='first_name' className='block text-sm font-medium text-gray-700 mb-2'>
-                    First Name <span className='text-red-500'>*</span>
+                  <label
+                    htmlFor="first_name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type='text'
-                    id='first_name'
+                    type="text"
+                    id="first_name"
                     value={formData.first_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, first_name: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 {/* Last Name */}
                 <div>
-                  <label htmlFor='last_name' className='block text-sm font-medium text-gray-700 mb-2'>
-                    Last Name <span className='text-red-500'>*</span>
+                  <label
+                    htmlFor="last_name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type='text'
-                    id='last_name'
+                    type="text"
+                    id="last_name"
                     value={formData.last_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, last_name: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email
                   </label>
                   <input
-                    type='email'
-                    id='email'
+                    type="email"
+                    id="email"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
-                  <p className='text-xs text-gray-500 mt-1'>Optional</p>
+                  <p className="text-xs text-gray-500 mt-1">Optional</p>
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label htmlFor='phone' className='block text-sm font-medium text-gray-700 mb-2'>
-                    Phone <span className='text-red-500'>*</span>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type='tel'
-                    id='phone'
+                    type="tel"
+                    id="phone"
                     value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
-                  <p className='text-xs text-gray-500 mt-1'>Zimbabwe format (e.g., +263771234567)</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Zimbabwe format (e.g., +263771234567)
+                  </p>
                 </div>
 
                 {/* Customer Type */}
                 <div>
-                  <label htmlFor='customer_type' className='block text-sm font-medium text-gray-700 mb-2'>
-                    Customer Type <span className='text-red-500'>*</span>
+                  <label
+                    htmlFor="customer_type"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Customer Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    id='customer_type'
+                    id="customer_type"
                     value={formData.customer_type}
-                    onChange={(e) =>
-                      setFormData({ ...formData, customer_type: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, customer_type: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   >
-                    <option value='individual'>Individual</option>
-                    <option value='business'>Business</option>
-                    <option value='organization'>Organization</option>
+                    <option value="individual">Individual</option>
+                    <option value="business">Business</option>
+                    <option value="organization">Organization</option>
                   </select>
                 </div>
 
                 {/* Address */}
                 <div>
-                  <label htmlFor='address' className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                     Address
                   </label>
                   <input
-                    type='text'
-                    id='address'
+                    type="text"
+                    id="address"
                     value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
-                  <p className='text-xs text-gray-500 mt-1'>Optional</p>
+                  <p className="text-xs text-gray-500 mt-1">Optional</p>
                 </div>
               </div>
 
               {/* Form Actions */}
-              <div className='flex gap-4 pt-6 border-t border-gray-200'>
+              <div className="flex gap-4 pt-6 border-t border-gray-200">
                 <button
-                  type='submit'
+                  type="submit"
                   disabled={submitting}
-                  className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {submitting ? 'Saving...' : 'Save Changes'}
                 </button>
                 <Link
-                  href='/customers'
-                  className='flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center'
+                  href="/customers"
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center"
                 >
                   Cancel
                 </Link>
@@ -339,26 +335,26 @@ export default function EditCustomerPage() {
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-6'>
+        <div className="space-y-6">
           {/* Customer Info Card */}
-          <div className='bg-white rounded-lg shadow p-6'>
-            <h3 className='font-semibold text-gray-900 mb-4'>Customer Information</h3>
-            <div className='space-y-3 text-sm'>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Customer Information</h3>
+            <div className="space-y-3 text-sm">
               <div>
-                <p className='text-gray-600'>ID</p>
-                <p className='font-mono text-gray-900 break-all'>{customer.id}</p>
+                <p className="text-gray-600">ID</p>
+                <p className="font-mono text-gray-900 break-all">{customer.id}</p>
               </div>
               <div>
-                <p className='text-gray-600'>Created</p>
-                <p className='text-gray-900'>
+                <p className="text-gray-600">Created</p>
+                <p className="text-gray-900">
                   {new Date(customer.created_at).toLocaleDateString()} at{' '}
                   {new Date(customer.created_at).toLocaleTimeString()}
                 </p>
               </div>
               {customer.updated_at && (
                 <div>
-                  <p className='text-gray-600'>Last Updated</p>
-                  <p className='text-gray-900'>
+                  <p className="text-gray-600">Last Updated</p>
+                  <p className="text-gray-900">
                     {new Date(customer.updated_at).toLocaleDateString()} at{' '}
                     {new Date(customer.updated_at).toLocaleTimeString()}
                   </p>
@@ -368,9 +364,9 @@ export default function EditCustomerPage() {
           </div>
 
           {/* Danger Zone */}
-          <div className='bg-white rounded-lg shadow p-6 border border-red-200'>
-            <h3 className='font-semibold text-red-900 mb-4'>Danger Zone</h3>
-            <p className='text-sm text-gray-600 mb-4'>
+          <div className="bg-white rounded-lg shadow p-6 border border-red-200">
+            <h3 className="font-semibold text-red-900 mb-4">Danger Zone</h3>
+            <p className="text-sm text-gray-600 mb-4">
               Deleting a customer cannot be undone. Please be certain.
             </p>
             <button
@@ -382,14 +378,12 @@ export default function EditCustomerPage() {
                   : 'bg-red-50 text-red-700 hover:bg-red-100'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {deleteConfirm
-                ? 'Click again to confirm delete'
-                : 'Delete Customer'}
+              {deleteConfirm ? 'Click again to confirm delete' : 'Delete Customer'}
             </button>
             {deleteConfirm && (
               <button
                 onClick={() => setDeleteConfirm(false)}
-                className='w-full mt-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50'
+                className="w-full mt-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
                 Cancel
               </button>

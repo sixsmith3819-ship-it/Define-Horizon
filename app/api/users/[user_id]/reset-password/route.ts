@@ -1,7 +1,7 @@
 /**
  * POST /api/users/:user_id/reset-password
  * Admin-initiated password reset
- * 
+ *
  * Requirements: 12.6, 18.1
  */
 
@@ -25,10 +25,7 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get current user's role for permission checking
@@ -56,34 +53,24 @@ export async function POST(
       .single();
 
     if (!targetUser) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Check permissions: admin or manager of user's branch
     const canReset =
-      isAdmin ||
-      (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
+      isAdmin || (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
 
     if (!canReset) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     // Generate new temporary password
     const tempPassword = generateTemporaryPassword();
 
     // Update password via Supabase Auth
-    const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
-      user_id,
-      {
-        password: tempPassword,
-      }
-    );
+    const { error: updateError } = await adminSupabase.auth.admin.updateUserById(user_id, {
+      password: tempPassword,
+    });
 
     if (updateError) {
       console.error('Password reset error:', updateError);
@@ -128,10 +115,7 @@ export async function POST(
     });
   } catch (error) {
     console.error('POST /api/users/:user_id/reset-password error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 

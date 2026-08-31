@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { AlertCircle, ArrowLeft, Archive, Trash2, Edit2, Eye, Calendar, User } from 'lucide-react';
-import { Announcement, AnnouncementPriority, AnnouncementStatus } from '@/lib/validations/announcement';
+import {
+  Announcement,
+  AnnouncementPriority,
+  AnnouncementStatus,
+} from '@/lib/validations/announcement';
 
 type Priority = 'urgent' | 'high' | 'normal' | 'low';
 type VisibilityType = 'company_wide' | 'branch_specific' | 'role_specific';
@@ -275,25 +279,21 @@ export default function AnnouncementDetailPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {announcement.title}
-                </h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{announcement.title}</h1>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span
                     className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${getPriorityColor(
                       announcement.priority
                     )}`}
                   >
-                    {announcement.priority.charAt(0).toUpperCase() +
-                      announcement.priority.slice(1)}
+                    {announcement.priority.charAt(0).toUpperCase() + announcement.priority.slice(1)}
                   </span>
                   <span
                     className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${getStatusColor(
                       announcement.status
                     )}`}
                   >
-                    {announcement.status.charAt(0).toUpperCase() +
-                      announcement.status.slice(1)}
+                    {announcement.status.charAt(0).toUpperCase() + announcement.status.slice(1)}
                   </span>
                 </div>
               </div>
@@ -341,8 +341,8 @@ export default function AnnouncementDetailPage() {
                   {announcement.visibility_type === 'company_wide'
                     ? 'Company-Wide'
                     : announcement.visibility_type === 'branch_specific'
-                    ? 'Branch-Specific'
-                    : 'Role-Specific'}
+                      ? 'Branch-Specific'
+                      : 'Role-Specific'}
                 </p>
               </div>
 
@@ -374,9 +374,7 @@ export default function AnnouncementDetailPage() {
             <div className="space-y-6">
               {/* Title */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Title
-                </label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Title</label>
                 <input
                   type="text"
                   value={editFormData.title}
@@ -399,9 +397,7 @@ export default function AnnouncementDetailPage() {
 
               {/* Content */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Content
-                </label>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Content</label>
                 <textarea
                   value={editFormData.content}
                   onChange={(e) => {
@@ -424,17 +420,13 @@ export default function AnnouncementDetailPage() {
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Priority
-                </label>
+                <label className="block text-sm font-semibold text-gray-900 mb-3">Priority</label>
                 <div className="grid grid-cols-4 gap-3">
-                  {['low', 'normal', 'high', 'urgent'].map(p => (
+                  {['low', 'normal', 'high', 'urgent'].map((p) => (
                     <button
                       key={p}
                       type="button"
-                      onClick={() =>
-                        setEditFormData({ ...editFormData, priority: p as Priority })
-                      }
+                      onClick={() => setEditFormData({ ...editFormData, priority: p as Priority })}
                       className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
                         editFormData.priority === p
                           ? 'border-blue-500 bg-blue-50'
@@ -449,16 +441,17 @@ export default function AnnouncementDetailPage() {
 
               {/* Visibility */}
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Visibility
-                </label>
+                <label className="block text-sm font-semibold text-gray-900 mb-3">Visibility</label>
                 <div className="space-y-2">
                   {[
                     { value: 'company_wide', label: 'Company-Wide' },
                     { value: 'branch_specific', label: 'Branch-Specific' },
                     { value: 'role_specific', label: 'Role-Specific' },
-                  ].map(opt => (
-                    <label key={opt.value} className="flex items-center p-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                  ].map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="flex items-center p-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                    >
                       <input
                         type="radio"
                         name="visibility"

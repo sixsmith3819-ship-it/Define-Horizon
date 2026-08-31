@@ -13,48 +13,38 @@ const supabase = createClient(
 /**
  * GET /api/transactions/[id] - Get single transaction
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
     const { data, error } = await supabase
       .from('transactions')
-      .select(`
+      .select(
+        `
         *,
         customer:customers(id, first_name, last_name, email, phone_number)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
     if (error) throw error;
 
     if (!data) {
-      return NextResponse.json(
-        { error: 'Transaction not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch transaction' }, { status: 500 });
   }
 }
 
 /**
  * PATCH /api/transactions/[id] - Update transaction status
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -72,10 +62,7 @@ export async function PATCH(
     if (fetchError) throw fetchError;
 
     if (!currentTransaction) {
-      return NextResponse.json(
-        { error: 'Transaction not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
     // Validate status transition (one-way state machine)
@@ -93,17 +80,15 @@ export async function PATCH(
     }
 
     // Record status change in history
-    const { error: historyError } = await supabase
-      .from('transaction_status_history')
-      .insert([
-        {
-          transaction_id: id,
-          old_status: currentTransaction.status,
-          new_status: validatedData.status,
-          reason: validatedData.reason || null,
-          changed_at: new Date().toISOString(),
-        },
-      ]);
+    const { error: historyError } = await supabase.from('transaction_status_history').insert([
+      {
+        transaction_id: id,
+        old_status: currentTransaction.status,
+        new_status: validatedData.status,
+        reason: validatedData.reason || null,
+        changed_at: new Date().toISOString(),
+      },
+    ]);
 
     if (historyError) throw historyError;
 
@@ -115,10 +100,12 @@ export async function PATCH(
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
-      .select(`
+      .select(
+        `
         *,
         customer:customers(id, first_name, last_name, email, phone_number)
-      `)
+      `
+      )
       .single();
 
     if (updateError) throw updateError;
@@ -135,10 +122,7 @@ export async function PATCH(
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to update transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update transaction' }, { status: 500 });
   }
 }
 
@@ -162,10 +146,7 @@ export async function DELETE(
     if (fetchError) throw fetchError;
 
     if (!transaction) {
-      return NextResponse.json(
-        { error: 'Transaction not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
     }
 
     // Soft delete by updating status if not already completed/failed
@@ -183,9 +164,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete transaction' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete transaction' }, { status: 500 });
   }
 }

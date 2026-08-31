@@ -1,11 +1,11 @@
 /**
  * RLS Policies Integration Tests
- * 
+ *
  * Tests to verify Row-Level Security (RLS) policies are correctly implemented
  * on all user-related tables and prevent unauthorized access.
- * 
+ *
  * Requirements Validated: 15.7, 14.6, 14.7
- * 
+ *
  * These are comprehensive integration tests that verify:
  * 1. RLS is enabled on all tables
  * 2. Role-based access control works correctly
@@ -440,56 +440,56 @@ describe('RLS Policies - Row-Level Security', () => {
 
   describe('RLS Policies Enabled Verification', () => {
     test('RLS is enabled on profiles table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'profiles'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on roles table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'roles'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on branches table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'branches'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on login_history table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'login_history'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on audit_log table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'audit_log'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on user_invitations table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'user_invitations'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('RLS is enabled on saved_searches table', () => {
-      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables 
+      // Query: SELECT schemaname, tablename, rowsecurity FROM pg_tables
       //        WHERE schemaname = 'public' AND tablename = 'saved_searches'
       // Expected: rowsecurity = true
       expect(true).toBe(true); // Integration test
     });
 
     test('All RLS policies are present and enabled', () => {
-      // Query: SELECT COUNT(*) FROM information_schema.table_constraints 
+      // Query: SELECT COUNT(*) FROM information_schema.table_constraints
       //        WHERE constraint_type = 'CHECK' AND table_schema = 'public'
       // Expected: At least 31 RLS policies across all tables
       // Implementation: Verify policy count and names
@@ -501,9 +501,9 @@ describe('RLS Policies - Row-Level Security', () => {
 describe('RLS Policies - Access Control Scenarios', () => {
   /**
    * Access Control Matrix Testing
-   * 
+   *
    * Tests verify that the access control matrix is correctly enforced:
-   * 
+   *
    * | Action | Super Admin | Branch Manager | Employee | Auditor |
    * |--------|-------------|----------------|----------|---------|
    * | Read All Profiles | ✓ | X (own branch) | X (own) | ✓ |
@@ -512,7 +512,7 @@ describe('RLS Policies - Access Control Scenarios', () => {
    * | Read All Audit Log | ✓ | X (own actions) | X (own) | ✓ |
    * | Modify Audit Log | X | X | X | X |
    * | Read Login History | ✓ | X (own) | X (own) | X (see all) |
-   * 
+   *
    * Requirement: 14.6 - Role-based permission enforcement
    * Requirement: 14.7 - Audit log access control and branch-scoped access
    * Requirement: 15.7 - Row-level security implementation

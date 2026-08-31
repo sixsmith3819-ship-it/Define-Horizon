@@ -1,11 +1,11 @@
 /**
  * Audit Triggers Integration Tests
- * 
+ *
  * Tests to verify that database triggers automatically log all changes
  * to profiles and branches tables, and that audit logs are immutable.
- * 
+ *
  * **Validates: Requirements 18.1, 18.4, 18.6**
- * 
+ *
  * Test Coverage:
  * - Profile INSERT trigger logs user creation
  * - Profile UPDATE trigger logs changes with before/after state

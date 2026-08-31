@@ -87,10 +87,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch stock movements' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch stock movements' }, { status: 500 });
   }
 }
 
@@ -114,27 +111,19 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (productError && productError.code === 'PGRST116') {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     if (productError) throw productError;
 
     // Validate sufficient stock for removal
     if (validatedData.movement_type === 'out' && product.quantity < validatedData.quantity) {
-      return NextResponse.json(
-        { error: 'Insufficient stock for this operation' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Insufficient stock for this operation' }, { status: 400 });
     }
 
     // Calculate new quantity
     const quantityChange =
-      validatedData.movement_type === 'in'
-        ? validatedData.quantity
-        : -validatedData.quantity;
+      validatedData.movement_type === 'in' ? validatedData.quantity : -validatedData.quantity;
     const newQuantity = product.quantity + quantityChange;
 
     // Update product quantity
@@ -191,9 +180,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to record stock movement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to record stock movement' }, { status: 500 });
   }
 }

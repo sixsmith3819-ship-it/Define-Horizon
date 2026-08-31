@@ -22,7 +22,11 @@ export default function BranchDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const [branch, setBranch] = useState<Branch | null>(null);
-  const [stats, setStats] = useState<Stats>({ employeeCount: 0, customerCount: 0, transactionCount: 0 });
+  const [stats, setStats] = useState<Stats>({
+    employeeCount: 0,
+    customerCount: 0,
+    transactionCount: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,11 +65,21 @@ export default function BranchDetailPage() {
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Branch Information</h2>
           <div className="space-y-2">
-            <p><strong>Name:</strong> {branch.branch_name}</p>
-            <p><strong>Code:</strong> {branch.branch_code}</p>
-            <p><strong>Address:</strong> {branch.address}</p>
-            <p><strong>Phone:</strong> {branch.phone_number || 'N/A'}</p>
-            <p><strong>Status:</strong> {branch.is_active ? '🟢 Active' : '🔴 Inactive'}</p>
+            <p>
+              <strong>Name:</strong> {branch.branch_name}
+            </p>
+            <p>
+              <strong>Code:</strong> {branch.branch_code}
+            </p>
+            <p>
+              <strong>Address:</strong> {branch.address}
+            </p>
+            <p>
+              <strong>Phone:</strong> {branch.phone_number || 'N/A'}
+            </p>
+            <p>
+              <strong>Status:</strong> {branch.is_active ? '🟢 Active' : '🔴 Inactive'}
+            </p>
           </div>
         </div>
 

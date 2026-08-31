@@ -22,7 +22,9 @@ const StatusBadge: React.FC<{ status: TransactionStatus }> = ({ status }) => {
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status]}`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
@@ -35,7 +37,9 @@ const TypeBadge: React.FC<{ type: string }> = ({ type }) => {
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type as keyof typeof colors]}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type as keyof typeof colors]}`}
+    >
       {type.charAt(0).toUpperCase() + type.slice(1)}
     </span>
   );
@@ -58,7 +62,10 @@ export function TransactionTable({
     return (
       <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg border border-gray-200">
         <p className="text-gray-500 mb-2">No transactions found</p>
-        <Link href="/transactions/new" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        <Link
+          href="/transactions/new"
+          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+        >
           Create your first transaction →
         </Link>
       </div>
@@ -109,9 +116,7 @@ export function TransactionTable({
                 <div className="text-gray-900 font-medium">
                   {transaction.customer?.first_name} {transaction.customer?.last_name}
                 </div>
-                <div className="text-gray-500 text-xs">
-                  {transaction.customer?.email || 'N/A'}
-                </div>
+                <div className="text-gray-500 text-xs">{transaction.customer?.email || 'N/A'}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <TypeBadge type={transaction.transaction_type} />
@@ -126,8 +131,8 @@ export function TransactionTable({
                 {transaction.total_amount.toFixed(2)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                {transaction.payment_method.replace('_', ' ').charAt(0).toUpperCase() + 
-                 transaction.payment_method.replace('_', ' ').slice(1)}
+                {transaction.payment_method.replace('_', ' ').charAt(0).toUpperCase() +
+                  transaction.payment_method.replace('_', ' ').slice(1)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <StatusBadge status={transaction.status} />

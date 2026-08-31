@@ -5,7 +5,7 @@ import { AuthUser, UserRole } from './types';
 export async function getSession(): Promise<AuthUser | null> {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getSession();
-  
+
   if (error || !data.session) return null;
 
   // Fetch user profile

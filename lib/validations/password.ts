@@ -5,7 +5,7 @@ import { z } from 'zod';
 /**
  * Password complexity validation
  * Requirements: 12.5 - Password security standards
- * 
+ *
  * Rules:
  * - Minimum 8 characters
  * - At least one uppercase letter (A-Z)
@@ -32,10 +32,7 @@ export const passwordValidationSchema = z
     (password) => PASSWORD_LOWERCASE.test(password),
     'Password must contain at least one lowercase letter'
   )
-  .refine(
-    (password) => PASSWORD_DIGITS.test(password),
-    'Password must contain at least one number'
-  )
+  .refine((password) => PASSWORD_DIGITS.test(password), 'Password must contain at least one number')
   .refine(
     (password) => PASSWORD_SPECIAL_CHARS.test(password),
     'Password must contain at least one special character (!@#$%^&*)'
@@ -114,6 +111,8 @@ export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export function validatePasswordNotContainsEmail(password: string, email: string): boolean {
   // Extract username from email (part before @)
   const username = email.split('@')[0];
-  return !password.toLowerCase().includes(username.toLowerCase()) &&
-         !password.toLowerCase().includes(email.toLowerCase());
+  return (
+    !password.toLowerCase().includes(username.toLowerCase()) &&
+    !password.toLowerCase().includes(email.toLowerCase())
+  );
 }

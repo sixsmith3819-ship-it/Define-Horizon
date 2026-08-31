@@ -1,7 +1,7 @@
 /**
  * POST /api/users/bulk-actions
  * Perform bulk operations on multiple users
- * 
+ *
  * Requirements: 15.6
  */
 
@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { user_ids, action, role_id, branch_id, status, suspension_reason, format } = validation.data;
+    const { user_ids, action, role_id, branch_id, status, suspension_reason, format } =
+      validation.data;
 
     const supabase = createServerComponentClient();
     const adminSupabase = createAdminClient();
@@ -38,10 +39,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if current user is Super Administrator
@@ -71,15 +69,12 @@ export async function POST(request: NextRequest) {
       .in('id', user_ids);
 
     if (fetchError || !targetUsers) {
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch users' },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: 'Failed to fetch users' }, { status: 500 });
     }
 
     if (targetUsers.length !== user_ids.length) {
-      const foundIds = new Set(targetUsers.map(u => u.id));
-      const missingIds = user_ids.filter(id => !foundIds.has(id));
+      const foundIds = new Set(targetUsers.map((u) => u.id));
+      const missingIds = user_ids.filter((id) => !foundIds.has(id));
       return NextResponse.json(
         { success: false, error: `Some users not found: ${missingIds.join(', ')}` },
         { status: 400 }
@@ -108,10 +103,7 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (!roleExists) {
-          return NextResponse.json(
-            { success: false, error: 'Invalid role ID' },
-            { status: 400 }
-          );
+          return NextResponse.json({ success: false, error: 'Invalid role ID' }, { status: 400 });
         }
 
         // Update all users with new role atomically
@@ -120,7 +112,7 @@ export async function POST(request: NextRequest) {
             // Increment version number for optimistic locking
             const { error: updateError } = await adminSupabase
               .from('profiles')
-              .update({ 
+              .update({
                 role_id,
                 version_number: user.version_number + 1,
               })
@@ -177,10 +169,7 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (!branchExists) {
-          return NextResponse.json(
-            { success: false, error: 'Invalid branch ID' },
-            { status: 400 }
-          );
+          return NextResponse.json({ success: false, error: 'Invalid branch ID' }, { status: 400 });
         }
 
         // Update all users with new branch atomically
@@ -188,7 +177,7 @@ export async function POST(request: NextRequest) {
           try {
             const { error: updateError } = await adminSupabase
               .from('profiles')
-              .update({ 
+              .update({
                 branch_id,
                 version_number: user.version_number + 1,
               })
@@ -244,7 +233,7 @@ export async function POST(request: NextRequest) {
           try {
             const { error: updateError } = await adminSupabase
               .from('profiles')
-              .update({ 
+              .update({
                 is_active: isActive,
                 suspension_reason: !isActive ? suspension_reason : null,
                 suspension_date: !isActive ? new Date().toISOString() : null,
@@ -300,10 +289,9 @@ export async function POST(request: NextRequest) {
             const tempPassword = generateTemporaryPassword();
 
             // Update password via admin client
-            const { error: updateError } = await adminSupabase.auth.admin.updateUserById(
-              user.id,
-              { password: tempPassword }
-            );
+            const { error: updateError } = await adminSupabase.auth.admin.updateUserById(user.id, {
+              password: tempPassword,
+            });
 
             if (updateError) {
               failedUsers.push({
@@ -413,10 +401,7 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { success: false, error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
 
     return NextResponse.json(
@@ -434,10 +419,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('POST /api/users/bulk-actions error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 

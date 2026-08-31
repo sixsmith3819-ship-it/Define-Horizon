@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Archive, Trash2, Eye, Plus, Search } from 'lucide-react';
-import { Announcement, AnnouncementPriority, AnnouncementStatus } from '@/lib/validations/announcement';
+import {
+  Announcement,
+  AnnouncementPriority,
+  AnnouncementStatus,
+} from '@/lib/validations/announcement';
 
 type SortOption = 'newest' | 'oldest' | 'priority-high' | 'priority-low';
 
@@ -59,7 +63,7 @@ export default function AnnouncementsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to archive');
-      setAnnouncements(announcements.filter(a => a.id !== id));
+      setAnnouncements(announcements.filter((a) => a.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to archive announcement');
     }
@@ -76,7 +80,7 @@ export default function AnnouncementsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to delete');
-      setAnnouncements(announcements.filter(a => a.id !== id));
+      setAnnouncements(announcements.filter((a) => a.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete announcement');
     }
@@ -298,31 +302,27 @@ export default function AnnouncementsPage() {
                       announcement.priority
                     )}`}
                   >
-                    {announcement.priority.charAt(0).toUpperCase() +
-                      announcement.priority.slice(1)}
+                    {announcement.priority.charAt(0).toUpperCase() + announcement.priority.slice(1)}
                   </span>
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
                       announcement.status
                     )}`}
                   >
-                    {announcement.status.charAt(0).toUpperCase() +
-                      announcement.status.slice(1)}
+                    {announcement.status.charAt(0).toUpperCase() + announcement.status.slice(1)}
                   </span>
                 </div>
               </div>
 
               {/* Card Body */}
               <div className="p-6 space-y-4">
-                <p className="text-sm text-slate-600 line-clamp-3">
-                  {announcement.content}
-                </p>
+                <p className="text-sm text-slate-600 line-clamp-3">{announcement.content}</p>
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>
                     {new Date(announcement.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
-                      year: 'numeric'
+                      year: 'numeric',
                     })}
                   </span>
                   <div className="flex items-center gap-1">
@@ -413,7 +413,7 @@ export default function AnnouncementsPage() {
                       {new Date(announcement.created_at).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
-                        year: 'numeric'
+                        year: 'numeric',
                       })}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
@@ -457,7 +457,7 @@ export default function AnnouncementsPage() {
         <div className="glass-lg rounded-xl p-4">
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-200 transition-all"
             >
@@ -465,7 +465,7 @@ export default function AnnouncementsPage() {
             </button>
             <span className="px-4 py-2 text-slate-600 font-medium">Page {page}</span>
             <button
-              onClick={() => setPage(p => p + 1)}
+              onClick={() => setPage((p) => p + 1)}
               className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-all"
             >
               Next

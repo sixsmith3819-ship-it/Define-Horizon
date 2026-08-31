@@ -1,6 +1,6 @@
 /**
  * Authentication Zod Schemas
- * 
+ *
  * Validation schemas for authentication-related requests and responses
  */
 
@@ -17,10 +17,7 @@ export const LoginRequestSchema = z.object({
     .toLowerCase()
     .email('Invalid email format')
     .describe('User email address'),
-  password: z
-    .string()
-    .min(1, 'Password is required')
-    .describe('User password'),
+  password: z.string().min(1, 'Password is required').describe('User password'),
 });
 
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
@@ -84,10 +81,7 @@ export type LoginErrorResponse = z.infer<typeof LoginErrorResponseSchema>;
  * Login Response Schema (Union)
  * Can be either success or error response
  */
-export const LoginResponseSchema = z.union([
-  LoginSuccessResponseSchema,
-  LoginErrorResponseSchema,
-]);
+export const LoginResponseSchema = z.union([LoginSuccessResponseSchema, LoginErrorResponseSchema]);
 
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
@@ -113,10 +107,7 @@ export const SetPasswordRequestSchema = z.object({
     .string()
     .min(1, 'Invitation token is required')
     .describe('Password reset or invitation token'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .describe('New password'),
+  password: z.string().min(8, 'Password must be at least 8 characters').describe('New password'),
   password_confirmation: z
     .string()
     .min(8, 'Password confirmation must be at least 8 characters')
@@ -129,10 +120,7 @@ export type SetPasswordRequest = z.infer<typeof SetPasswordRequestSchema>;
  * Verify Session Request Schema
  */
 export const VerifySessionRequestSchema = z.object({
-  token: z
-    .string()
-    .optional()
-    .describe('Access token or refresh token to verify'),
+  token: z.string().optional().describe('Access token or refresh token to verify'),
 });
 
 export type VerifySessionRequest = z.infer<typeof VerifySessionRequestSchema>;

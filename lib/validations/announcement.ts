@@ -7,8 +7,14 @@ export const AnnouncementPriorityEnum = z.enum(['urgent', 'high', 'normal', 'low
 export const VisibilityTypeEnum = z.enum(['company_wide', 'branch_specific', 'role_specific']);
 
 export const createAnnouncementSchema = z.object({
-  title: z.string().min(5, 'Title must be at least 5 characters').max(255, 'Title must not exceed 255 characters'),
-  content: z.string().min(20, 'Content must be at least 20 characters').max(5000, 'Content must not exceed 5000 characters'),
+  title: z
+    .string()
+    .min(5, 'Title must be at least 5 characters')
+    .max(255, 'Title must not exceed 255 characters'),
+  content: z
+    .string()
+    .min(20, 'Content must be at least 20 characters')
+    .max(5000, 'Content must not exceed 5000 characters'),
   priority: AnnouncementPriorityEnum.default('normal'),
   visibility_type: VisibilityTypeEnum.default('company_wide'),
   visibility_branches: z.array(z.string().uuid()).optional().default([]),

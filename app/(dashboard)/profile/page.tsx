@@ -14,7 +14,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const { toasts, addToast, removeToast } = useToast();
 
-  const [formData, setFormData] = useState({full_name: user?.full_name || '',
+  const [formData, setFormData] = useState({
+    full_name: user?.full_name || '',
     phone_number: user?.phone_number || '',
   });
 
@@ -53,7 +54,7 @@ export default function ProfilePage() {
 
   async function handleChangePassword(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       addToast('Passwords do not match', 'error');
       return;
@@ -86,28 +87,28 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className="space-y-6">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <div>
-        <h1 className='text-3xl font-bold text-gray-900'>My Profile</h1>
-        <p className='text-gray-600 mt-1'>Manage your account settings and preferences</p>
+        <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+        <p className="text-gray-600 mt-1">Manage your account settings and preferences</p>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Profile Card */}
-        <div className='lg:col-span-2 space-y-6'>
+        <div className="lg:col-span-2 space-y-6">
           {/* User Info */}
-          <div className='bg-white rounded-lg shadow p-6 border border-gray-200'>
-            <div className='flex justify-between items-start mb-6'>
+          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className='text-2xl font-bold text-gray-900'>{user.full_name || 'User'}</h2>
-                <p className='text-gray-600 mt-1'>{user.email}</p>
+                <h2 className="text-2xl font-bold text-gray-900">{user.full_name || 'User'}</h2>
+                <p className="text-gray-600 mt-1">{user.email}</p>
               </div>
               {!isEditing && !isChangingPassword && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Edit Profile
                 </button>
@@ -115,52 +116,50 @@ export default function ProfilePage() {
             </div>
 
             {!isEditing ? (
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 <div>
-                  <p className='text-sm font-medium text-gray-500'>Phone Number</p>
-                  <p className='text-gray-900 mt-1'>{user.phone_number || 'Not set'}</p>
+                  <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                  <p className="text-gray-900 mt-1">{user.phone_number || 'Not set'}</p>
                 </div>
                 <div>
-                  <p className='text-sm font-medium text-gray-500'>Email Address</p>
-                  <p className='text-gray-900 mt-1'>{user.email}</p>
+                  <p className="text-sm font-medium text-gray-500">Email Address</p>
+                  <p className="text-gray-900 mt-1">{user.email}</p>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleUpdateProfile} className='space-y-4'>
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
-                    Full Name
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input
-                    type='text'
+                    type="text"
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number
                   </label>
                   <input
-                    type='tel'
+                    type="tel"
                     value={formData.phone_number}
                     onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
-                <div className='flex space-x-3'>
+                <div className="flex space-x-3">
                   <button
-                    type='submit'
+                    type="submit"
                     disabled={loading}
-                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors'
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                   >
                     {loading ? 'Saving...' : 'Save Changes'}
                   </button>
                   <button
-                    type='button'
+                    type="button"
                     onClick={() => {
                       setIsEditing(false);
                       setFormData({
@@ -168,7 +167,7 @@ export default function ProfilePage() {
                         phone_number: user.phone_number || '',
                       });
                     }}
-                    className='px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors'
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -178,13 +177,13 @@ export default function ProfilePage() {
           </div>
 
           {/* Change Password */}
-          <div className='bg-white rounded-lg shadow p-6 border border-gray-200'>
-            <div className='flex justify-between items-start mb-6'>
-              <h2 className='text-lg font-semibold text-gray-900'>Security</h2>
+          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">Security</h2>
               {!isChangingPassword && !isEditing && (
                 <button
                   onClick={() => setIsChangingPassword(true)}
-                  className='px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors'
+                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   Change Password
                 </button>
@@ -192,63 +191,63 @@ export default function ProfilePage() {
             </div>
 
             {isChangingPassword && (
-              <form onSubmit={handleChangePassword} className='space-y-4'>
+              <form onSubmit={handleChangePassword} className="space-y-4">
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Current Password
                   </label>
                   <input
-                    type='password'
+                    type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, currentPassword: e.target.value })
                     }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     New Password
                   </label>
                   <input
-                    type='password'
+                    type="password"
                     value={passwordData.newPassword}
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, newPassword: e.target.value })
                     }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
-                  <p className='text-xs text-gray-500 mt-1'>Must be at least 8 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Confirm Password
                   </label>
                   <input
-                    type='password'
+                    type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, confirmPassword: e.target.value })
                     }
-                    className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                     required
                   />
                 </div>
 
-                <div className='flex space-x-3'>
+                <div className="flex space-x-3">
                   <button
-                    type='submit'
+                    type="submit"
                     disabled={loading}
-                    className='px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 transition-colors'
+                    className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 transition-colors"
                   >
                     {loading ? 'Updating...' : 'Update Password'}
                   </button>
                   <button
-                    type='button'
+                    type="button"
                     onClick={() => {
                       setIsChangingPassword(false);
                       setPasswordData({
@@ -257,7 +256,7 @@ export default function ProfilePage() {
                         confirmPassword: '',
                       });
                     }}
-                    className='px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors'
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
@@ -268,24 +267,24 @@ export default function ProfilePage() {
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-6'>
+        <div className="space-y-6">
           {/* Account Info */}
-          <div className='bg-white rounded-lg shadow p-6 border border-gray-200'>
-            <h3 className='text-lg font-semibold text-gray-900 mb-4'>Account Info</h3>
-            <div className='space-y-4'>
+          <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Info</h3>
+            <div className="space-y-4">
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Role</p>
-                <p className='text-sm text-gray-900 font-medium mt-1 capitalize'>
+                <p className="text-xs font-medium text-gray-500 uppercase">Role</p>
+                <p className="text-sm text-gray-900 font-medium mt-1 capitalize">
                   {user.role.replace('_', ' ')}
                 </p>
               </div>
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Branch</p>
-                <p className='text-sm text-gray-900 font-medium mt-1'>{user.branch_name || '-'}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase">Branch</p>
+                <p className="text-sm text-gray-900 font-medium mt-1">{user.branch_name || '-'}</p>
               </div>
               <div>
-                <p className='text-xs font-medium text-gray-500 uppercase'>Status</p>
-                <p className='text-sm text-gray-900 font-medium mt-1'>
+                <p className="text-xs font-medium text-gray-500 uppercase">Status</p>
+                <p className="text-sm text-gray-900 font-medium mt-1">
                   {user.is_active ? '🟢 Active' : '🔴 Inactive'}
                 </p>
               </div>
@@ -293,15 +292,15 @@ export default function ProfilePage() {
           </div>
 
           {/* Account ID */}
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-            <p className='text-xs text-blue-600 font-medium uppercase'>Account ID</p>
-            <p className='text-xs text-blue-900 font-mono mt-2 break-all'>{user.id}</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-xs text-blue-600 font-medium uppercase">Account ID</p>
+            <p className="text-xs text-blue-900 font-mono mt-2 break-all">{user.id}</p>
           </div>
 
           {/* Help */}
-          <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-            <p className='text-sm font-medium text-gray-900 mb-3'>Need Help?</p>
-            <p className='text-xs text-gray-600'>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p className="text-sm font-medium text-gray-900 mb-3">Need Help?</p>
+            <p className="text-xs text-gray-600">
               Contact your system administrator if you need additional assistance with your account.
             </p>
           </div>

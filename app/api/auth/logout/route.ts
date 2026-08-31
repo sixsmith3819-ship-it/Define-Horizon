@@ -1,12 +1,12 @@
 ﻿/**
  * POST /api/auth/logout
- * 
+ *
  * Logs out the current user by:
  * 1. Finding and closing the active session
  * 2. Logging the logout event
  * 3. Invalidating the session token
  * 4. Clearing authentication cookies
- * 
+ *
  * Requirements: 17.5, 18.1
  */
 
@@ -173,9 +173,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Logout error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Logout failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Logout failed' }, { status: 500 });
   }
 }

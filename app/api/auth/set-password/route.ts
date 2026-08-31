@@ -1,6 +1,6 @@
 /**
  * POST /api/auth/set-password
- * 
+ *
  * Completes password reset process by:
  * 1. Extracting and validating reset token
  * 2. Validating new password complexity
@@ -9,7 +9,7 @@
  * 5. Logging password change to audit_log
  * 6. Marking user_invitations as accepted if applicable
  * 7. Invalidating all other sessions
- * 
+ *
  * Requirements: 12.5, 17.8, 18.1
  */
 

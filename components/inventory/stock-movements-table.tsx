@@ -22,10 +22,10 @@ interface StockMovementsTableProps {
 export function StockMovementsTable({ movements, isLoading = false }: StockMovementsTableProps) {
   if (isLoading) {
     return (
-      <div className='bg-white rounded-lg shadow p-8'>
-        <div className='flex justify-center items-center'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
-          <span className='ml-2 text-gray-600'>Loading movements...</span>
+      <div className="bg-white rounded-lg shadow p-8">
+        <div className="flex justify-center items-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-gray-600">Loading movements...</span>
         </div>
       </div>
     );
@@ -33,8 +33,8 @@ export function StockMovementsTable({ movements, isLoading = false }: StockMovem
 
   if (movements.length === 0) {
     return (
-      <div className='bg-white rounded-lg shadow p-8'>
-        <p className='text-center text-gray-500'>No stock movements recorded yet</p>
+      <div className="bg-white rounded-lg shadow p-8">
+        <p className="text-center text-gray-500">No stock movements recorded yet</p>
       </div>
     );
   }
@@ -58,37 +58,37 @@ export function StockMovementsTable({ movements, isLoading = false }: StockMovem
   };
 
   return (
-    <div className='bg-white rounded-lg shadow overflow-hidden'>
-      <div className='overflow-x-auto'>
-        <table className='w-full'>
-          <thead className='bg-gray-50 border-b border-gray-200'>
+    <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className='px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Date
               </th>
-              <th className='px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Type
               </th>
-              <th className='px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider'>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Quantity
               </th>
-              <th className='px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Reason
               </th>
-              <th className='px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider'>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Reference
               </th>
             </tr>
           </thead>
-          <tbody className='divide-y divide-gray-200'>
+          <tbody className="divide-y divide-gray-200">
             {movements.map((movement) => (
-              <tr key={movement.id} className='hover:bg-gray-50 transition'>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <span className='text-sm text-gray-900'>
+              <tr key={movement.id} className="hover:bg-gray-50 transition">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-sm text-gray-900">
                     {format(new Date(movement.created_at), 'MMM dd, yyyy HH:mm')}
                   </span>
                 </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
+                <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getMovementBadge(
                       movement.movement_type
@@ -97,20 +97,21 @@ export function StockMovementsTable({ movements, isLoading = false }: StockMovem
                     {getMovementLabel(movement.movement_type)}
                   </span>
                 </td>
-                <td className='px-6 py-4 whitespace-nowrap text-center'>
+                <td className="px-6 py-4 whitespace-nowrap text-center">
                   <span
                     className={`text-sm font-semibold ${
                       movement.movement_type === 'in' ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
-                    {movement.movement_type === 'in' ? '+' : '-'}{movement.quantity}
+                    {movement.movement_type === 'in' ? '+' : '-'}
+                    {movement.quantity}
                   </span>
                 </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <span className='text-sm text-gray-600'>{movement.reason || '-'}</span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-sm text-gray-600">{movement.reason || '-'}</span>
                 </td>
-                <td className='px-6 py-4 whitespace-nowrap'>
-                  <span className='text-sm text-gray-600'>{movement.reference || '-'}</span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="text-sm text-gray-600">{movement.reference || '-'}</span>
                 </td>
               </tr>
             ))}

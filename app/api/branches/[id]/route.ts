@@ -6,10 +6,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { data, error } = await supabase
       .from('branches')
@@ -23,17 +20,11 @@ export async function GET(
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching branch:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch branch' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch branch' }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await request.json();
     const { data, error } = await supabase
@@ -47,10 +38,7 @@ export async function PUT(
     return NextResponse.json(data?.[0] || {});
   } catch (error) {
     console.error('Error updating branch:', error);
-    return NextResponse.json(
-      { error: 'Failed to update branch' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update branch' }, { status: 500 });
   }
 }
 
@@ -69,9 +57,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting branch:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete branch' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete branch' }, { status: 500 });
   }
 }

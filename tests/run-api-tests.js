@@ -97,7 +97,11 @@ async function runTests() {
       } catch (e) {
         console.log('✗ GET /api/dashboard/metrics (JSON parse error)');
         failed++;
-        results.push({ test: 'GET /api/dashboard/metrics', status: 'FAIL', reason: 'JSON parse error' });
+        results.push({
+          test: 'GET /api/dashboard/metrics',
+          status: 'FAIL',
+          reason: 'JSON parse error',
+        });
       }
     } else {
       console.log(`✗ GET /api/dashboard/metrics (status: ${res.status})`);

@@ -24,7 +24,7 @@ export function calculateServiceCharge(
 ): number {
   const finalRates = { ...DEFAULT_RATES, ...rates };
   const rate = transactionType === 'domestic' ? finalRates.domestic : finalRates.international;
-  
+
   const charge = amount * rate;
   return Math.round(charge * 100) / 100; // Round to 2 decimal places
 }

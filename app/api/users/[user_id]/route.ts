@@ -5,7 +5,7 @@
  * Update user account
  * DELETE /api/users/:user_id
  * Delete user account (soft delete)
- * 
+ *
  * Requirements: 12.7, 13.7, 19.8
  */
 
@@ -33,10 +33,7 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get current user's profile for permission checking
@@ -60,7 +57,8 @@ export async function GET(
     // Get target user profile
     const { data: targetUser } = await supabase
       .from('profiles')
-      .select(`
+      .select(
+        `
         id,
         email,
         full_name,
@@ -73,15 +71,13 @@ export async function GET(
         version_number,
         roles!inner (name),
         branches!inner (name)
-      `)
+      `
+      )
       .eq('id', user_id)
       .single();
 
     if (!targetUser) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Check permissions: self, admin, or branch manager of user's branch
@@ -91,10 +87,7 @@ export async function GET(
       (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
 
     if (!canView) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     // Get login history (last 5)
@@ -106,7 +99,7 @@ export async function GET(
       .limit(5);
 
     // Calculate session duration (placeholder - would use actual duration field)
-    const formattedLoginHistory = (loginHistory || []).map(login => ({
+    const formattedLoginHistory = (loginHistory || []).map((login) => ({
       login_timestamp: login.login_timestamp,
       ip_address: login.ip_address,
       device_type: login.device_type,
@@ -121,7 +114,7 @@ export async function GET(
       .order('created_at', { ascending: false })
       .limit(10);
 
-    const formattedAuditLog = (auditLog || []).map(log => ({
+    const formattedAuditLog = (auditLog || []).map((log) => ({
       timestamp: log.created_at,
       action_type: log.action_type,
       description: log.description,
@@ -145,10 +138,7 @@ export async function GET(
     });
   } catch (error) {
     console.error('GET /api/users/:user_id error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -190,10 +180,7 @@ export async function PUT(
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get current user's role for permission checking
@@ -221,10 +208,7 @@ export async function PUT(
       .single();
 
     if (!targetUser) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Check permissions
@@ -234,10 +218,7 @@ export async function PUT(
       (isManager && currentUserProfile?.branch_id === targetUser.branch_id);
 
     if (!canUpdate) {
-      return NextResponse.json(
-        { success: false, error: 'Forbidden' },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     // Check optimistic locking version
@@ -245,7 +226,8 @@ export async function PUT(
       // Get latest user data for conflict response
       const { data: latestUser } = await supabase
         .from('profiles')
-        .select(`
+        .select(
+          `
           id,
           email,
           full_name,
@@ -258,7 +240,8 @@ export async function PUT(
           version_number,
           roles!inner (name),
           branches!inner (name)
-        `)
+        `
+        )
         .eq('id', user_id)
         .single();
 
@@ -306,10 +289,7 @@ export async function PUT(
         .eq('id', role_id)
         .single();
       if (!roleExists) {
-        return NextResponse.json(
-          { success: false, error: 'Invalid role ID' },
-          { status: 400 }
-        );
+        return NextResponse.json({ success: false, error: 'Invalid role ID' }, { status: 400 });
       }
     }
 
@@ -320,10 +300,7 @@ export async function PUT(
         .eq('id', branch_id)
         .single();
       if (!branchExists) {
-        return NextResponse.json(
-          { success: false, error: 'Invalid branch ID' },
-          { status: 400 }
-        );
+        return NextResponse.json({ success: false, error: 'Invalid branch ID' }, { status: 400 });
       }
     }
 
@@ -335,10 +312,7 @@ export async function PUT(
 
     if (updateError) {
       console.error('Profile update error:', updateError);
-      return NextResponse.json(
-        { success: false, error: 'Failed to update user' },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: 'Failed to update user' }, { status: 500 });
     }
 
     // Log changes to audit_logs
@@ -373,7 +347,8 @@ export async function PUT(
     // Get updated user data
     const { data: updatedUser } = await supabase
       .from('profiles')
-      .select(`
+      .select(
+        `
         id,
         email,
         full_name,
@@ -386,7 +361,8 @@ export async function PUT(
         version_number,
         roles!inner (name),
         branches!inner (name)
-      `)
+      `
+      )
       .eq('id', user_id)
       .single();
 
@@ -399,10 +375,7 @@ export async function PUT(
     });
   } catch (error) {
     console.error('PUT /api/users/:user_id error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -429,10 +402,7 @@ export async function DELETE(
     } = await supabase.auth.getUser();
 
     if (authError || !currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify requester is Super Administrator
@@ -463,10 +433,7 @@ export async function DELETE(
       .single();
 
     if (!targetUser) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
     // Verify email confirmation
@@ -488,10 +455,7 @@ export async function DELETE(
 
     if (deleteError) {
       console.error('Profile deletion error:', deleteError);
-      return NextResponse.json(
-        { success: false, error: 'Failed to delete user' },
-        { status: 500 }
-      );
+      return NextResponse.json({ success: false, error: 'Failed to delete user' }, { status: 500 });
     }
 
     // Invalidate all active sessions for deleted user
@@ -521,9 +485,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error('DELETE /api/users/:user_id error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

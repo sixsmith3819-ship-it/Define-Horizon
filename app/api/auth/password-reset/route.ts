@@ -1,13 +1,13 @@
 /**
  * POST /api/auth/password-reset
- * 
+ *
  * Initiates password reset process by:
  * 1. Validating email format
  * 2. Checking if email exists (silently)
  * 3. Calling Supabase auth.resetPasswordForEmail()
  * 4. Logging the reset request to audit_log
  * 5. Returning generic success message (don't disclose if email exists)
- * 
+ *
  * Requirements: 17.7, 18.1
  */
 

@@ -43,7 +43,10 @@ interface ActivityDashboardProps {
  * User Management Activity Dashboard
  * Displays metrics, trends, and quick actions
  */
-export function ActivityDashboard({ refreshInterval = 60000, onQuickAction }: ActivityDashboardProps) {
+export function ActivityDashboard({
+  refreshInterval = 60000,
+  onQuickAction,
+}: ActivityDashboardProps) {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,10 +83,7 @@ export function ActivityDashboard({ refreshInterval = 60000, onQuickAction }: Ac
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-lg p-6 border border-slate-200 animate-pulse"
-          >
+          <div key={i} className="bg-white rounded-lg p-6 border border-slate-200 animate-pulse">
             <div className="h-4 bg-slate-200 rounded mb-2 w-24" />
             <div className="h-8 bg-slate-200 rounded" />
           </div>
@@ -175,7 +175,7 @@ export function ActivityDashboard({ refreshInterval = 60000, onQuickAction }: Ac
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Deactivations</h2>
           {metrics.recent_deactivations.length > 0 ? (
             <div className="space-y-3">
-              {metrics.recent_deactivations.slice(0, 5).map(deactivation => (
+              {metrics.recent_deactivations.slice(0, 5).map((deactivation) => (
                 <div
                   key={deactivation.user_id}
                   className="p-3 bg-slate-50 rounded-lg border border-slate-200"
@@ -185,9 +185,7 @@ export function ActivityDashboard({ refreshInterval = 60000, onQuickAction }: Ac
                       <p className="font-medium text-slate-900">{deactivation.name}</p>
                       <p className="text-sm text-slate-600">{deactivation.email}</p>
                       {deactivation.reason && (
-                        <p className="text-sm text-slate-500 mt-1">
-                          Reason: {deactivation.reason}
-                        </p>
+                        <p className="text-sm text-slate-500 mt-1">Reason: {deactivation.reason}</p>
                       )}
                     </div>
                     <p className="text-xs text-slate-500">
@@ -255,11 +253,13 @@ function MetricCard({ title, value, icon, href, trend }: MetricCardProps) {
       <div className="flex items-baseline gap-2">
         <span className="text-2xl font-bold text-slate-900">{value}</span>
         {trend && (
-          <div className={clsx('flex items-center gap-1 text-sm font-medium', {
-            'text-green-600': trend.trend === 'up',
-            'text-red-600': trend.trend === 'down',
-            'text-slate-600': trend.trend === 'stable',
-          })}>
+          <div
+            className={clsx('flex items-center gap-1 text-sm font-medium', {
+              'text-green-600': trend.trend === 'up',
+              'text-red-600': trend.trend === 'down',
+              'text-slate-600': trend.trend === 'stable',
+            })}
+          >
             {trend.trend === 'up' && <TrendingUp size={16} />}
             {trend.trend === 'down' && <TrendingDown size={16} />}
             {trend.percentage_change > 0 && `+${trend.percentage_change}%`}
@@ -282,11 +282,7 @@ function MetricCard({ title, value, icon, href, trend }: MetricCardProps) {
     );
   }
 
-  return (
-    <div className="bg-white rounded-lg p-6 border border-slate-200">
-      {content}
-    </div>
-  );
+  return <div className="bg-white rounded-lg p-6 border border-slate-200">{content}</div>;
 }
 
 interface QuickActionButtonProps {

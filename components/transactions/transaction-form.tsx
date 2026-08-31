@@ -5,21 +5,23 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createTransactionSchema, CreateTransactionInput, Customer } from '@/lib/validations/transaction';
+import {
+  createTransactionSchema,
+  CreateTransactionInput,
+  Customer,
+} from '@/lib/validations/transaction';
 import { calculateServiceCharge, calculateTotalAmount } from '@/lib/utils/service-charge';
 import { ServiceChargeCalculator } from './service-charge-calculator';
 
 interface TransactionFormProps {
   customers: Customer[];
-  onSubmit: (data: CreateTransactionInput & { serviceCharge: number; totalAmount: number }) => Promise<void>;
+  onSubmit: (
+    data: CreateTransactionInput & { serviceCharge: number; totalAmount: number }
+  ) => Promise<void>;
   isLoading?: boolean;
 }
 
-export function TransactionForm({
-  customers,
-  onSubmit,
-  isLoading = false,
-}: TransactionFormProps) {
+export function TransactionForm({ customers, onSubmit, isLoading = false }: TransactionFormProps) {
   const [serviceCharge, setServiceCharge] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -106,9 +108,7 @@ export function TransactionForm({
           placeholder="0.00"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
         />
-        {errors.amount && (
-          <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>
-        )}
+        {errors.amount && <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>}
       </div>
 
       {/* Transaction Type */}

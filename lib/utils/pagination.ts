@@ -1,6 +1,6 @@
 /**
  * Pagination Utilities
- * 
+ *
  * Helper functions for paginated queries and responses
  */
 
@@ -106,10 +106,7 @@ export function validateSortParams(
 /**
  * Build SQL ORDER BY clause
  */
-export function buildOrderByClause(
-  sortBy: string,
-  sortOrder: 'asc' | 'desc'
-): string {
+export function buildOrderByClause(sortBy: string, sortOrder: 'asc' | 'desc'): string {
   // Sanitize to prevent SQL injection
   const safeField = sortBy.replace(/[^a-zA-Z0-9_]/g, '');
   const safeOrder = sortOrder === 'desc' ? 'DESC' : 'ASC';

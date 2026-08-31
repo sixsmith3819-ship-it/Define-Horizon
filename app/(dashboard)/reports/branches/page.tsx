@@ -49,7 +49,9 @@ export default function BranchesReportPage() {
                   <td className="px-4 py-3">{b.branch_code}</td>
                   <td className="px-4 py-3">{b.address}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${b.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-semibold ${b.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+                    >
                       {b.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>

@@ -2,9 +2,23 @@
 
 import { z } from 'zod';
 
-export const ProductCategoryEnum = z.enum(['Electronics', 'Software', 'Accessories', 'Services', 'Other']);
+export const ProductCategoryEnum = z.enum([
+  'Electronics',
+  'Software',
+  'Accessories',
+  'Services',
+  'Other',
+]);
 export const StockMovementTypeEnum = z.enum(['in', 'out', 'adjustment']);
-export const StockMovementReasonEnum = z.enum(['purchase', 'sale', 'damage', 'loss', 'return', 'correction', 'other']);
+export const StockMovementReasonEnum = z.enum([
+  'purchase',
+  'sale',
+  'damage',
+  'loss',
+  'return',
+  'correction',
+  'other',
+]);
 export const ProductStatusEnum = z.enum(['active', 'inactive', 'discontinued']);
 
 // Product creation/update schema

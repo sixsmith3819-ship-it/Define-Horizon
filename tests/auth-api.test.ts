@@ -1,6 +1,6 @@
 /**
  * Comprehensive Test Suite for Wave 2 Authentication API
- * 
+ *
  * Tests for:
  * - POST /api/auth/login (Task 2.1)
  * - POST /api/auth/logout (Task 2.2)

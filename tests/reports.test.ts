@@ -58,7 +58,9 @@ describe('Reports Module', () => {
     });
 
     it('should handle empty transaction reports', async () => {
-      const res = await fetch(`${baseUrl}/api/reports/transactions?search=nonexistent${Date.now()}`);
+      const res = await fetch(
+        `${baseUrl}/api/reports/transactions?search=nonexistent${Date.now()}`
+      );
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(Array.isArray(data.data)).toBe(true);
@@ -95,7 +97,9 @@ describe('Reports Module', () => {
       const data = await res.json();
 
       if (data.length > 0) {
-        const lowStockItems = data.filter((item: any) => item.quantity <= (item.reorder_level || 0));
+        const lowStockItems = data.filter(
+          (item: any) => item.quantity <= (item.reorder_level || 0)
+        );
         expect(Array.isArray(lowStockItems)).toBe(true);
       }
     });

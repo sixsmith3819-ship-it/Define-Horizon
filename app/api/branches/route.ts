@@ -11,10 +11,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get('search') || '';
 
-    let query = supabase
-      .from('branches')
-      .select('*')
-      .order('date_created', { ascending: false });
+    let query = supabase.from('branches').select('*').order('date_created', { ascending: false });
 
     if (search) {
       query = query.ilike('branch_name', `%${search}%`);
@@ -35,15 +32,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { data, error } = await supabase
       .from('branches')
-      .insert([{
-        branch_name: body.branch_name,
-        branch_code: body.branch_code,
-        address: body.address,
-        phone_number: body.phone_number || null,
-        is_active: true,
-        date_created: new Date().toISOString(),
-        date_modified: new Date().toISOString(),
-      }])
+      .insert([
+        {
+          branch_name: body.branch_name,
+          branch_code: body.branch_code,
+          address: body.address,
+          phone_number: body.phone_number || null,
+          is_active: true,
+          date_created: new Date().toISOString(),
+          date_modified: new Date().toISOString(),
+        },
+      ])
       .select()
       .single();
 

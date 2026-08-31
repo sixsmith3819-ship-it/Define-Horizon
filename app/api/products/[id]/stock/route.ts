@@ -14,20 +14,14 @@ const supabase = createClient(
 /**
  * GET /api/products/[id]/stock - Get stock movement history for a product
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const productId = (await params).id;
     const searchParams = request.nextUrl.searchParams;
 
     // Validate UUID format
     if (!isValidUUID(productId)) {
-      return NextResponse.json(
-        { error: 'Invalid product ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid product ID format' }, { status: 400 });
     }
 
     // Get pagination parameters
@@ -42,10 +36,7 @@ export async function GET(
       .single();
 
     if (productError && productError.code === 'PGRST116') {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     // Get stock movements
@@ -72,30 +63,21 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching stock movements:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch stock movements' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch stock movements' }, { status: 500 });
   }
 }
 
 /**
  * POST /api/products/[id]/stock - Record stock movement (add/remove stock)
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const productId = (await params).id;
     const body = await request.json();
 
     // Validate UUID format
     if (!isValidUUID(productId)) {
-      return NextResponse.json(
-        { error: 'Invalid product ID format' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid product ID format' }, { status: 400 });
     }
 
     // Validate input
@@ -112,10 +94,7 @@ export async function POST(
       .single();
 
     if (productError && productError.code === 'PGRST116') {
-      return NextResponse.json(
-        { error: 'Product not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     if (productError) throw productError;
@@ -128,17 +107,12 @@ export async function POST(
     );
 
     if (!validation.valid) {
-      return NextResponse.json(
-        { error: validation.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
     // Calculate new quantity
     const quantityChange =
-      validatedData.movement_type === 'in'
-        ? validatedData.quantity
-        : -validatedData.quantity;
+      validatedData.movement_type === 'in' ? validatedData.quantity : -validatedData.quantity;
     const newQuantity = product.quantity + quantityChange;
 
     // Start transaction: update product quantity and record movement
@@ -193,10 +167,7 @@ export async function POST(
       );
     }
 
-    return NextResponse.json(
-      { error: 'Failed to record stock movement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to record stock movement' }, { status: 500 });
   }
 }
 

@@ -46,9 +46,11 @@ export function TopBar() {
               <div className="p-4 border-b border-gray-200">
                 <p className="text-sm font-medium text-gray-900">{user?.full_name || 'User'}</p>
                 <p className="text-xs text-gray-500 mt-1">{user?.email}</p>
-                <p className="text-xs text-gray-500 mt-1 capitalize">{user?.role?.replace('_', ' ') || 'Employee'}</p>
+                <p className="text-xs text-gray-500 mt-1 capitalize">
+                  {user?.role?.replace('_', ' ') || 'Employee'}
+                </p>
               </div>
-              
+
               <div className="p-2 space-y-1">
                 <Link
                   href="/profile"
@@ -58,7 +60,7 @@ export function TopBar() {
                   <User className="w-4 h-4" />
                   <span>My Profile</span>
                 </Link>
-                
+
                 <button
                   onClick={() => {
                     handleSignOut();
